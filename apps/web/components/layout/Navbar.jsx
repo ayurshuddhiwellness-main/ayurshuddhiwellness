@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useScrolled } from '../../hooks/useScrolled'
+import AnimatedLink from '../ui/AnimatedLink'
 
 const navLinks = [
   { label: 'Home', href: '#' },
@@ -14,10 +15,16 @@ export default function Navbar() {
   const scrolled = useScrolled(10)
   const [menuOpen, setMenuOpen] = useState(false)
 
+  // Settle to a solid linen bar once scrolled (or when the mobile menu is open),
+  // cross-fading background + border on the shared easing curve — like glass settling.
+  const solid = scrolled || menuOpen
+
   return (
     <header
-      className={`sticky top-0 z-50 bg-background transition-all duration-300 ${
-        scrolled ? 'border-b border-border shadow-sm' : ''
+      className={`sticky top-0 z-50 border-b transition-[background-color,border-color,box-shadow] duration-[400ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${
+        solid
+          ? 'border-border bg-background shadow-sm'
+          : 'border-transparent bg-transparent'
       }`}
     >
       <div className="mx-auto flex h-16 max-w-content items-center justify-between px-6 lg:px-12">
@@ -32,7 +39,7 @@ export default function Navbar() {
             <a
               key={link.label}
               href={link.href}
-              className="font-sans text-sm uppercase tracking-widest text-muted transition-all duration-300 hover:text-foreground"
+              className="font-sans text-sm uppercase tracking-widest text-muted transition-colors duration-300 hover:text-foreground"
             >
               {link.label}
             </a>
@@ -40,12 +47,12 @@ export default function Navbar() {
         </nav>
 
         {/* CTA — desktop */}
-        <a
+        <AnimatedLink
           href="#contact"
-          className="hidden rounded-full bg-primary px-6 py-2.5 font-sans text-sm font-medium text-white transition-all duration-300 hover:bg-primary-hover md:inline-flex"
+          className="hidden rounded-full bg-primary px-6 py-2.5 font-sans text-sm font-medium text-white transition-colors duration-300 hover:bg-primary-hover md:inline-flex md:items-center"
         >
           Book Now
-        </a>
+        </AnimatedLink>
 
         {/* Hamburger — mobile */}
         <button
@@ -88,18 +95,18 @@ export default function Navbar() {
                 key={link.label}
                 href={link.href}
                 onClick={() => setMenuOpen(false)}
-                className="font-sans text-sm uppercase tracking-widest text-muted transition-all duration-300 hover:text-foreground"
+                className="font-sans text-sm uppercase tracking-widest text-muted transition-colors duration-300 hover:text-foreground"
               >
                 {link.label}
               </a>
             ))}
-            <a
+            <AnimatedLink
               href="#contact"
               onClick={() => setMenuOpen(false)}
-              className="mt-2 inline-flex justify-center rounded-full bg-primary px-6 py-2.5 font-sans text-sm font-medium text-white transition-all duration-300 hover:bg-primary-hover"
+              className="mt-2 inline-flex items-center justify-center rounded-full bg-primary px-6 py-2.5 font-sans text-sm font-medium text-white transition-colors duration-300 hover:bg-primary-hover"
             >
               Book Now
-            </a>
+            </AnimatedLink>
           </nav>
         </div>
       )}

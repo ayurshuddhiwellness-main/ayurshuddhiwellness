@@ -1,4 +1,4 @@
-import ScrollReveal from '../ui/ScrollReveal'
+import { RevealGroup, RevealItem } from '../ui/Reveal'
 
 const pillars = [
   {
@@ -75,16 +75,18 @@ export default function ThreePillars() {
   return (
     <section className="bg-background px-6 py-24 lg:px-12">
       <div className="mx-auto max-w-content">
-        <ScrollReveal>
-          <h2 className="font-serif text-4xl font-normal text-foreground">
-            3 Pillars
-          </h2>
-        </ScrollReveal>
+        <RevealGroup>
+          <RevealItem>
+            <h2 className="font-serif text-4xl font-normal text-foreground">
+              3 Pillars
+            </h2>
+          </RevealItem>
+        </RevealGroup>
 
-        <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-3">
-          {pillars.map((pillar, i) => (
-            <ScrollReveal key={pillar.title} delay={i * 0.1}>
-              <div className="group rounded-2xl border border-border bg-white p-8 transition-all duration-300 hover:shadow-soft">
+        <RevealGroup className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-3">
+          {pillars.map((pillar) => (
+            <RevealItem key={pillar.title} className="h-full">
+              <div className="h-full rounded-2xl border border-border bg-white p-8 transition-shadow duration-300 hover:shadow-soft">
                 <div className="mb-6">{pillar.icon}</div>
                 <h3 className="font-serif text-xl text-foreground">
                   {pillar.title}
@@ -93,9 +95,9 @@ export default function ThreePillars() {
                   {pillar.description}
                 </p>
               </div>
-            </ScrollReveal>
+            </RevealItem>
           ))}
-        </div>
+        </RevealGroup>
       </div>
     </section>
   )
