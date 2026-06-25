@@ -1,5 +1,6 @@
 import { Playfair_Display, Inter } from 'next/font/google'
 import './globals.css'
+import MotionProvider from '../components/ui/MotionProvider'
 
 const playfair = Playfair_Display({
   subsets: ['latin'],
@@ -30,7 +31,9 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${playfair.variable} ${inter.variable}`}>
-      <body className="bg-background text-foreground antialiased">{children}</body>
+      <body className="bg-background text-foreground antialiased">
+        <MotionProvider>{children}</MotionProvider>
+      </body>
     </html>
   )
 }
