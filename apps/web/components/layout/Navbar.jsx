@@ -1,19 +1,46 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import Link from 'next/link'
 import { useScrolled } from '../../hooks/useScrolled'
 import AnimatedLink from '../ui/AnimatedLink'
 
 const navLinks = [
-  { label: 'Home', href: '#' },
-  { label: 'Links', href: '#' },
+  { label: 'Home', href: '#home' },
+  { label: 'About', href: '#about' },
+  { label: 'Services', href: '#services' },
+  { label: 'Journal', href: '#journal' },
   { label: 'Contact', href: '#contact' },
 ]
 
 export default function Navbar() {
   const scrolled = useScrolled(10)
   const [menuOpen, setMenuOpen] = useState(false)
+
+  // Smooth-scroll to the target section when a nav link is clicked,
+  // accounting for the sticky navbar height (~64px).
+  const handleNavClick = useCallback(
+    (e, href) => {
+      // "Home" link scrolls to the very top
+      if (href === '#home') {
+        e.preventDefault()
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+        setMenuOpen(false)
+        return
+      }
+
+      const id = href.replace('#', '')
+      const el = document.getElementById(id)
+      if (el) {
+        e.preventDefault()
+        const navHeight = 64
+        const top = el.getBoundingClientRect().top + window.scrollY - navHeight
+        window.scrollTo({ top, behavior: 'smooth' })
+        setMenuOpen(false)
+      }
+    },
+    [],
+  )
 
   // Settle to a solid linen bar once scrolled (or when the mobile menu is open),
   // cross-fading background + border on the shared easing curve — like glass settling.
@@ -39,6 +66,7 @@ export default function Navbar() {
             <a
               key={link.label}
               href={link.href}
+              onClick={(e) => handleNavClick(e, link.href)}
               className="font-sans text-sm uppercase tracking-widest text-muted transition-colors duration-300 hover:text-foreground"
             >
               {link.label}
@@ -49,6 +77,7 @@ export default function Navbar() {
         {/* CTA — desktop */}
         <AnimatedLink
           href="#contact"
+          onClick={(e) => handleNavClick(e, '#contact')}
           className="hidden rounded-full bg-primary px-6 py-2.5 font-sans text-sm font-medium text-white transition-colors duration-300 hover:bg-primary-hover md:inline-flex md:items-center"
         >
           Book Now
@@ -94,7 +123,7 @@ export default function Navbar() {
               <a
                 key={link.label}
                 href={link.href}
-                onClick={() => setMenuOpen(false)}
+                onClick={(e) => handleNavClick(e, link.href)}
                 className="font-sans text-sm uppercase tracking-widest text-muted transition-colors duration-300 hover:text-foreground"
               >
                 {link.label}
@@ -102,7 +131,7 @@ export default function Navbar() {
             ))}
             <AnimatedLink
               href="#contact"
-              onClick={() => setMenuOpen(false)}
+              onClick={(e) => handleNavClick(e, '#contact')}
               className="mt-2 inline-flex items-center justify-center rounded-full bg-primary px-6 py-2.5 font-sans text-sm font-medium text-white transition-colors duration-300 hover:bg-primary-hover"
             >
               Book Now
