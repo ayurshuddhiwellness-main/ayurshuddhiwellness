@@ -3,7 +3,7 @@ import AnimatedLink from '../ui/AnimatedLink'
 
 export default function Journal() {
   return (
-    <section className="bg-white px-6 py-24 lg:px-12">
+    <section id="journal" className="bg-white px-6 py-24 lg:px-12">
       <div className="mx-auto grid max-w-content items-center gap-12 md:grid-cols-12 md:gap-0">
         {/* Left — text content */}
         <RevealGroup className="md:col-span-7 md:pr-20">

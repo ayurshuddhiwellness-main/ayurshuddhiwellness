@@ -3,7 +3,7 @@ import AnimatedLink from '../ui/AnimatedLink'
 
 export default function RootedInTradition() {
   return (
-    <section id="about" className="bg-white px-6 py-24 lg:px-12">
+    <section className="bg-white px-6 py-24 lg:px-12">
       <div className="mx-auto grid max-w-content items-center gap-12 md:grid-cols-12 md:gap-0">
         {/* Left — product image placeholder */}
         <RevealGroup className="md:col-span-7">

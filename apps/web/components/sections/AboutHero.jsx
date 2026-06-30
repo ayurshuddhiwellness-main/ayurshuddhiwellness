@@ -52,7 +52,8 @@ function BotanicalMotif({ reduce }) {
             key={i}
             d={d}
             initial={{ pathLength: 0 }}
-            animate={{ pathLength: 1 }}
+            whileInView={{ pathLength: 1 }}
+            viewport={{ once: true }}
             transition={
               reduce
                 ? { duration: 0 }
@@ -75,7 +76,8 @@ function Headline({ reduce }) {
           key={li}
           className="block"
           initial={{ opacity: 0, y: reduce ? 0 : 12 }}
-          animate={{ opacity: 1, y: 0 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
           transition={{
             duration: 0.7,
             ease: EASE,
@@ -139,7 +141,7 @@ export default function AboutHero() {
   const reduce = useReducedMotion()
 
   return (
-    <section className="relative flex min-h-[90vh] items-center overflow-hidden bg-background px-6 lg:px-12">
+    <section id="about" className="relative flex min-h-[90vh] items-center overflow-hidden bg-background px-6 lg:px-12">
       <BotanicalMotif reduce={reduce} />
 
       <div className="relative z-10 mx-auto w-full max-w-content">
@@ -147,7 +149,8 @@ export default function AboutHero() {
           {/* Eyebrow */}
           <motion.p
             initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
             transition={{ duration: EYEBROW_DURATION, ease: EASE, delay: 0.1 }}
             className="mb-6 font-sans text-sm uppercase tracking-[0.25em] text-primary"
           >
@@ -160,7 +163,8 @@ export default function AboutHero() {
           {/* Body */}
           <motion.p
             initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
             transition={{ duration: 0.6, ease: EASE, delay: reduce ? 0 : BODY_DELAY }}
             className="mt-8 max-w-md font-sans text-lg leading-relaxed text-muted"
           >

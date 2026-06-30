@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import { motion, useReducedMotion } from 'framer-motion'
 import { EASE } from '../ui/motion'
 
@@ -9,16 +10,22 @@ const BEATS = [
     eyebrow: '01 — The Roots',
     headline: 'A practice rooted in lineage.',
     body: 'AyurshuddhiWellness began not as a business, but as a continuation of family tradition — Ayurvedic knowledge passed down through generations.',
+    image: '/images/practitioner/founder_image_1.JPEG',
+    alt: 'Founder — family roots in Ayurveda',
   },
   {
     eyebrow: '02 — The Study',
     headline: 'Refined through study.',
     body: 'What started as personal practice grew through rigorous clinical training, adapting centuries-old methods for the lives we live today.',
+    image: '/images/practitioner/founder_image_2.jpg',
+    alt: 'Founder — clinical training and study',
   },
   {
     eyebrow: '03 — The Practice',
     headline: 'Grown into a community.',
     body: 'Every consultation we offer carries that same intention: to treat the person, not just the symptom.',
+    image: '/images/practitioner/founder_image_3.JPEG',
+    alt: 'Founder — community practice',
   },
 ]
 
@@ -80,17 +87,24 @@ export default function AboutStory() {
         {/* Left — sticky image */}
         <div className="hidden md:col-span-5 md:block">
           <div className="sticky top-[20vh]">
-            <div className="relative flex aspect-[4/5] items-center justify-center overflow-hidden rounded-2xl bg-[#E8E4DD]">
-              {BEATS.map((_, i) => (
-                <motion.span
+            <div className="relative aspect-[4/5] overflow-hidden rounded-2xl bg-[#E8E4DD]">
+              {BEATS.map((beat, i) => (
+                <motion.div
                   key={i}
                   initial={false}
                   animate={{ opacity: reduce ? 1 : activeBeat === i ? 1 : 0 }}
                   transition={{ duration: reduce ? 0 : 0.4, ease: EASE }}
-                  className="absolute font-sans text-sm text-muted"
+                  className="absolute inset-0"
                 >
-                  Founder image {i + 1}
-                </motion.span>
+                  <Image
+                    src={beat.image}
+                    alt={beat.alt}
+                    fill
+                    sizes="(max-width: 768px) 100vw, 40vw"
+                    className="object-cover"
+                    priority={i === 0}
+                  />
+                </motion.div>
               ))}
             </div>
           </div>
