@@ -66,13 +66,18 @@ export default function Footer() {
               Quick Links
             </h4>
             <ul className="mt-4 space-y-3">
-              {['Home', 'Services', 'Journal', 'Contact'].map((link) => (
-                <li key={link}>
+              {[
+                { label: 'Home', href: '/' },
+                { label: 'Services', href: '/#services' },
+                { label: 'Blogs', href: '/blogs' },
+                { label: 'Contact', href: '/#contact' },
+              ].map((link) => (
+                <li key={link.label}>
                   <a
-                    href="#"
+                    href={link.href}
                     className="font-sans text-sm text-white/50 transition-all duration-300 hover:text-white"
                   >
-                    {link}
+                    {link.label}
                   </a>
                 </li>
               ))}

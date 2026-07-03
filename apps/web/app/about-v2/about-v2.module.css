@@ -1,0 +1,53 @@
+/* Diagonal split slide layout — the clip-paths are the core of this design. */
+
+.slide {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100vh;
+  opacity: 0;
+  transform: translateY(48px);
+  transition:
+    opacity 1000ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 1000ms cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+}
+
+.active {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+
+/* Text side — occupies the upper-right triangle */
+.topTriangle {
+  position: absolute;
+  inset: 0;
+  clip-path: polygon(0 0, 100% 0, 100% 100%);
+}
+
+/* Image side — occupies the lower-left triangle */
+.bottomTriangle {
+  position: absolute;
+  inset: 0;
+  clip-path: polygon(0 0, 100% 100%, 0 100%);
+  overflow: hidden;
+}
+
+/* Slightly overscaled so the ±20px mouse parallax never exposes edges */
+.parallax {
+  transform: scale(1.06);
+  transition: transform 150ms ease-out;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .slide {
+    transition: none;
+    transform: none;
+  }
+  .parallax {
+    transition: none;
+    transform: none;
+  }
+}
