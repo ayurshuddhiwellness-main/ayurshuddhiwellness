@@ -9,7 +9,7 @@ export default function Journal() {
         <RevealGroup className="md:col-span-7 md:pr-20">
           <RevealItem>
             <p className="mb-4 font-sans text-sm uppercase tracking-[0.25em] text-muted">
-              From the Journal
+              From the Blog
             </p>
           </RevealItem>
 
@@ -30,7 +30,7 @@ export default function Journal() {
 
           <RevealItem className="mt-8">
             <AnimatedLink
-              href="#"
+              href="/blogs"
               arrow
               className="inline-flex items-center rounded-full bg-primary px-7 py-3 font-sans text-sm font-medium text-white transition-colors duration-300 hover:bg-primary-hover"
             >
@@ -43,10 +43,10 @@ export default function Journal() {
         <RevealGroup className="md:col-span-5">
           <RevealItem>
             <div className="overflow-hidden rounded-2xl border border-border bg-background">
-              {/* Journal label bar */}
+              {/* Blog label bar */}
               <div className="bg-background px-5 py-2.5">
                 <span className="font-sans text-xs uppercase tracking-widest text-muted">
-                  Journal
+                  Blog
                 </span>
               </div>
 
@@ -66,7 +66,7 @@ export default function Journal() {
                   The Morning Ritual: How Dinacharya Transforms Your Day
                 </h3>
                 <AnimatedLink
-                  href="#"
+                  href="/blogs/dinacharya-daily-routine"
                   arrow
                   scale={false}
                   className="mt-4 inline-flex items-center font-sans text-sm text-primary underline underline-offset-4 transition-colors duration-300 hover:text-primary-hover"
