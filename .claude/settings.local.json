@@ -1,7 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(cd /c/Users/naman/OneDrive/Desktop/website && tree -L 4 -d \"ayurshuddhiwellness 2.0\" | head -150)"
-    ]
-  }
-}
