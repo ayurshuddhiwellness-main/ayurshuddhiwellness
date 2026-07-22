@@ -89,6 +89,10 @@ next-env.d.ts
 .stylelintcache
 
 # ========================
-# Project Docs (local only)
+# Project Docs & Temp (local only)
 # ========================
 QUICK_START.md
+graphify-out/
+.__nptest/
+.__wtest
+__synccheck.txt
