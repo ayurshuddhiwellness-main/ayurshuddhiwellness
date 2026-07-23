@@ -1,0 +1,40 @@
+/* Diagonal split slide layout — clip-paths are the core of this design.
+   Diagonal runs from upper-right down to lower-left:
+   text = upper-left triangle, image = lower-right triangle.
+   Slide opacity/enter animations are driven by framer-motion in page.js. */
+
+.slide {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100vh;
+}
+
+/* Text side — left trapezoid. Shares the seam edge (53% top, 40% bottom). */
+.textTriangle {
+  position: absolute;
+  inset: 0;
+  clip-path: polygon(0 0, 53% 0, 40% 100%, 0 100%);
+}
+
+/* Image side — right trapezoid. Shares the same seam edge, no gap/overlap. */
+.imageTriangle {
+  position: absolute;
+  inset: 0;
+  clip-path: polygon(53% 0, 100% 0, 100% 100%, 40% 100%);
+  overflow: hidden;
+}
+
+/* Slightly overscaled so the ±20px mouse parallax never exposes edges */
+.parallax {
+  transform: scale(1.06);
+  transition: transform 150ms ease-out;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .parallax {
+    transition: none;
+    transform: none;
+  }
+}

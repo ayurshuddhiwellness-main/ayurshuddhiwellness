@@ -1,0 +1,12 @@
+/** @type {import('eslint').Linter.Config} */
+const eslintConfig = {
+  extends: ['next/core-web-vitals'],
+  rules: {
+    'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+    'no-console': ['warn', { allow: ['warn', 'error'] }],
+    'react/prop-types': 'off',
+    'react/display-name': 'off',
+  },
+}
+
+module.exports = eslintConfig

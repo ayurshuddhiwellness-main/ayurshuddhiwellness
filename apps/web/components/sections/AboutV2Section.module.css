@@ -1,0 +1,74 @@
+/* Diagonal-split "About V2" — inline section version.
+   The original about-v2 was a full-page scroll-locked slideshow.
+   This version embeds it in the landing page flow using a sticky
+   container driven by framer-motion's useScroll + useTransform.
+
+   Layout: A tall wrapper (one viewport per slide) that keeps a
+   sticky viewport pinned while scrolling. Scroll progress maps
+   to the active slide index, driving crossfade transitions between
+   the diagonal-split panels. */
+
+.wrapper {
+  position: relative;
+}
+
+.stickyFrame {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* ── Diagonal clip-paths ─────────────────────────────── */
+
+.slide {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* Text side — left trapezoid. Seam: 53% top → 40% bottom. */
+.textTriangle {
+  position: absolute;
+  inset: 0;
+  clip-path: polygon(0 0, 53% 0, 40% 100%, 0 100%);
+}
+
+/* Image side — right trapezoid. Shares the same seam edge. */
+.imageTriangle {
+  position: absolute;
+  inset: 0;
+  clip-path: polygon(53% 0, 100% 0, 100% 100%, 40% 100%);
+  overflow: hidden;
+}
+
+/* Slightly overscaled so the ±20px mouse parallax never exposes edges */
+.parallax {
+  transform: scale(1.06);
+  transition: transform 150ms ease-out;
+  will-change: transform;
+}
+
+/* ── Mobile: stack vertically instead of diagonal ───── */
+@media (max-width: 767px) {
+  .textTriangle {
+    clip-path: none;
+    position: relative;
+    height: 50%;
+  }
+
+  .imageTriangle {
+    clip-path: none;
+    position: relative;
+    height: 50%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .parallax {
+    transition: none;
+    transform: none;
+  }
+}

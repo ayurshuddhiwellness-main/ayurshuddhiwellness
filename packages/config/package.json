@@ -1,0 +1,13 @@
+{
+  "name": "@ayurshuddhi/config",
+  "version": "0.0.1",
+  "private": true,
+  "main": "index.js",
+  "exports": {
+    "./tailwind": "./tailwind.config.base.js",
+    "./eslint": "./eslint.config.base.js"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.17"
+  }
+}
