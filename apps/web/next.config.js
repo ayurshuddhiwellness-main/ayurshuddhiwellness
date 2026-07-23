@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   transpilePackages: ['@ayurshuddhi/ui'],
+  serverExternalPackages: ['razorpay', 'firebase-admin'],
   async redirects() {
     return [
       {
