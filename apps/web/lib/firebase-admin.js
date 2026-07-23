@@ -11,9 +11,7 @@
 //   2. GOOGLE_APPLICATION_CREDENTIALS -> path to a service-account file (ADC)
 // Never hardcode credentials.
 
-import { createRequire } from 'module'
-
-const require = createRequire(import.meta.url)
+import admin from 'firebase-admin'
 
 let _cache = null
 
@@ -58,15 +56,6 @@ function _resolveCredential(admin) {
 
 function _init() {
   if (_cache) return _cache
-
-  let admin
-  try {
-    admin = require('firebase-admin')
-  } catch {
-    throw new Error(
-      "Package 'firebase-admin' is not installed. Run `npm install` in the repo root (it is listed in apps/web/package.json), then restart the dev server.",
-    )
-  }
 
   if (admin.apps.length === 0) {
     admin.initializeApp({ credential: _resolveCredential(admin) })

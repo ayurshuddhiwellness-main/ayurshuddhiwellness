@@ -4,10 +4,6 @@
 // the booking flow works in every environment. resend is imported lazily so the
 // package is only loaded when a key is actually present.
 
-import { createRequire } from 'module'
-
-const require = createRequire(import.meta.url)
-
 const FROM = process.env.RESEND_FROM || 'AyurShuddhi <bookings@ayurshuddhi.com>'
 const CLINIC_ADDRESS =
   process.env.CLINIC_ADDRESS ||
@@ -18,7 +14,7 @@ async function send({ to, subject, html }) {
     console.log(`[email:skipped] to=${to} subject="${subject}" (no RESEND_API_KEY)`)
     return { skipped: true }
   }
-  const { Resend } = require('resend')
+  const { Resend } = await import('resend')
   const resend = new Resend(process.env.RESEND_API_KEY)
   const { data, error } = await resend.emails.send({ from: FROM, to, subject, html })
   if (error) {
