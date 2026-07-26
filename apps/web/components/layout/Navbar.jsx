@@ -3,8 +3,11 @@
 import { useState, useCallback } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { motion } from 'framer-motion'
 import { useScrolled } from '../../hooks/useScrolled'
+import { useIntroPhase } from '../../hooks/useIntroSequence'
 import AnimatedLink from '../ui/AnimatedLink'
+import { EASE } from '../ui/motion'
 
 // Homepage sections use "/#id" so the links work from any route: on the
 // homepage they smooth-scroll; elsewhere they navigate home and jump. "Blogs"
@@ -12,13 +15,14 @@ import AnimatedLink from '../ui/AnimatedLink'
 const navLinks = [
   { label: 'Home', href: '/' },
   { label: 'About', href: '/#about' },
-  { label: 'Services', href: '/#services' },
+  { label: 'Services', href: '/services' },
   { label: 'Blogs', href: '/blogs' },
   { label: 'Contact', href: '/#contact' },
 ]
 
 export default function Navbar({ glass = false }) {
   const scrolled = useScrolled(10)
+  const introPhase = useIntroPhase()
   const [menuOpen, setMenuOpen] = useState(false)
   const pathname = usePathname()
   const onHome = pathname === '/'
@@ -60,12 +64,39 @@ export default function Navbar({ glass = false }) {
       }`}
     >
       <div className="mx-auto flex h-16 max-w-content items-center justify-between px-6 lg:px-12">
-        {/* Logo */}
+        {/* Brand — the slot reserves its width from first paint so the nav
+            links don't jump when the wordmark lands here from the hero. */}
         <Link
           href="/"
-          className={`font-serif text-xl font-semibold ${glass ? 'text-background' : 'text-foreground'}`}
+          aria-label="AyurshuddhiWellness — home"
+          className="flex h-10 w-52 shrink-0 items-center"
         >
-          AyurshuddhiWellness
+          {introPhase === 'navbar' && (
+            <motion.div
+              layoutId="brand-wordmark"
+              transition={{ duration: 0.9, ease: EASE }}
+            >
+              <span
+                aria-hidden="true"
+                className="whitespace-nowrap font-serif text-lg leading-none"
+              >
+                <span
+                  className={`font-bold tracking-[-0.02em] ${
+                    glass ? 'text-background' : 'text-foreground'
+                  }`}
+                >
+                  Ayurshuddhi
+                </span>
+                <span
+                  className={`font-normal italic ${
+                    glass ? 'text-background/80' : 'text-primary'
+                  }`}
+                >
+                  Wellness
+                </span>
+              </span>
+            </motion.div>
+          )}
         </Link>
 
         {/* Center nav — desktop */}

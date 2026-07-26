@@ -68,7 +68,7 @@ export default function Footer() {
             <ul className="mt-4 space-y-3">
               {[
                 { label: 'Home', href: '/' },
-                { label: 'Services', href: '/#services' },
+                { label: 'Services', href: '/services' },
                 { label: 'Blogs', href: '/blogs' },
                 { label: 'Contact', href: '/#contact' },
               ].map((link) => (
@@ -90,10 +90,10 @@ export default function Footer() {
               Services
             </h4>
             <ul className="mt-4 space-y-3">
-              {['Ayurveda', 'Panchakarma', 'Yoga', 'Consultation'].map((service) => (
+              {['Ayurveda', 'Naturopathy', 'Panchakarma', 'Yoga & Meditation'].map((service) => (
                 <li key={service}>
                   <a
-                    href="#"
+                    href="/services"
                     className="font-sans text-sm text-white/50 transition-all duration-300 hover:text-white"
                   >
                     {service}

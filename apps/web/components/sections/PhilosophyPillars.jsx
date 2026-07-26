@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion'
 import { RevealGroup, RevealItem } from '../ui/Reveal'
+import AnimatedLink from '../ui/AnimatedLink'
 import { EASE } from '../ui/motion'
 
 /* ──────────────────────────────────────────────────────
@@ -142,6 +143,19 @@ export default function PhilosophyPillars() {
             </div>
           </RevealItem>
         ))}
+      </RevealGroup>
+
+      {/* The three pillars are the headline offerings — the rest live on /services */}
+      <RevealGroup className="mt-16 text-center">
+        <RevealItem>
+          <AnimatedLink
+            href="/services"
+            arrow
+            className="inline-flex items-center rounded-full bg-primary px-7 py-3 font-sans text-sm font-medium text-white transition-colors duration-300 hover:bg-primary-hover"
+          >
+            Explore more services
+          </AnimatedLink>
+        </RevealItem>
       </RevealGroup>
     </motion.section>
   )
