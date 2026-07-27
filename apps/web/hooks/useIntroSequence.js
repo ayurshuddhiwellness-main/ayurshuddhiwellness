@@ -6,8 +6,8 @@ import { useSyncExternalStore } from 'react'
    Drives the load sequence shared by Hero and Navbar.
 
      'intro'  0s–1.5s   logo + wordmark full screen
-     'hero'   1.5s–5s   settled over the background video
-     'navbar' 5s+       logo parked in the nav bar
+     'hero'   1.5s+     settled over the background video
+     'navbar' scroll    logo parked in the nav bar (scroll-triggered)
 
    Hero and Navbar are siblings with no common ancestor, but a layoutId
    handoff tears if they disagree for even one frame — so the phase lives
@@ -16,7 +16,6 @@ import { useSyncExternalStore } from 'react'
    ────────────────────────────────────────────────────── */
 
 export const POP_MS = 1500
-export const SETTLE_MS = 5000
 
 let phase = 'intro'
 let heroPresent = false
@@ -36,7 +35,7 @@ function clear() {
 }
 
 // Routes without a Hero (/about, /services…) must not sit on an empty nav
-// slot for five seconds, so the sequence only arms itself if a Hero checked
+// slot indefinitely, so the sequence only arms itself if a Hero checked
 // in during this commit's effect pass — one frame is ample.
 function start() {
   if (started) return
@@ -47,13 +46,21 @@ function start() {
       set('navbar')
       return
     }
+    // Only the intro → hero leg is time-based.
+    // hero → navbar is scroll-driven (see advanceToNavbar).
     timers.push(setTimeout(() => set('hero'), POP_MS))
-    timers.push(setTimeout(() => set('navbar'), SETTLE_MS))
   })
 }
 
 export function registerHero() {
   heroPresent = true
+}
+
+// Called by Hero.jsx when the user scrolls past the threshold.
+export function advanceToNavbar() {
+  if (phase === 'navbar') return
+  clear()
+  set('navbar')
 }
 
 // Reduced motion: no splash, no travel — the logo is simply already home.

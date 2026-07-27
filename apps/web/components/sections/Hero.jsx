@@ -6,6 +6,7 @@ import { EASE } from '../ui/motion'
 import {
   registerHero,
   skipIntro,
+  advanceToNavbar,
   useIntroPhase,
 } from '../../hooks/useIntroSequence'
 
@@ -59,6 +60,22 @@ export default function Hero() {
     // frame stands in, so there is nothing to recover from.
     const started = el.play()
     if (started) started.catch(() => {})
+  }, [reduce])
+
+  // Scroll trigger: once the user scrolls past 100px, advance to the navbar
+  // phase. The listener removes itself after firing once.
+  useEffect(() => {
+    if (reduce) return // reduced motion already skipped to navbar
+
+    const onScroll = () => {
+      if (window.scrollY > 100) {
+        advanceToNavbar()
+        window.removeEventListener('scroll', onScroll)
+      }
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
   }, [reduce])
 
   // Each part lifts out of its own clipped frame in sequence. Under reduced
