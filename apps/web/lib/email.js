@@ -24,6 +24,16 @@ async function send({ to, subject, html }) {
   return { id: data?.id, skipped: false }
 }
 
+// User-supplied values are interpolated into email HTML — escape them.
+function escapeHtml(value) {
+  return String(value)
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;')
+}
+
 function formatDateTime(iso) {
   try {
     return new Date(iso).toLocaleString('en-IN', {
@@ -42,10 +52,10 @@ export function sendBookingConfirmation({ to, serviceName, slotDatetime, note })
       <h2 style="font-family:Georgia,serif;color:#3F5E50;">Your appointment is confirmed</h2>
       <p>Thank you for booking with AyurShuddhi Wellness.</p>
       <table style="margin:16px 0;">
-        <tr><td style="padding:4px 12px 4px 0;color:#6B6B63;">Service</td><td>${serviceName}</td></tr>
-        <tr><td style="padding:4px 12px 4px 0;color:#6B6B63;">When</td><td>${formatDateTime(slotDatetime)}</td></tr>
+        <tr><td style="padding:4px 12px 4px 0;color:#6B6B63;">Service</td><td>${escapeHtml(serviceName)}</td></tr>
+        <tr><td style="padding:4px 12px 4px 0;color:#6B6B63;">When</td><td>${escapeHtml(formatDateTime(slotDatetime))}</td></tr>
       </table>
-      ${note ? `<p style="color:#6B6B63;">A note from your practitioner: ${note}</p>` : ''}
+      ${note ? `<p style="color:#6B6B63;">A note from your practitioner: ${escapeHtml(note)}</p>` : ''}
       <p style="margin-top:16px;">${CLINIC_ADDRESS}</p>
       <p style="color:#6B6B63;">We look forward to seeing you.</p>
     </div>`
@@ -58,8 +68,8 @@ export function sendCancellation({ to, serviceName, slotDatetime }) {
       <h2 style="font-family:Georgia,serif;color:#3F5E50;">Your appointment has been cancelled</h2>
       <p>Your booking has been cancelled as requested.</p>
       <table style="margin:16px 0;">
-        <tr><td style="padding:4px 12px 4px 0;color:#6B6B63;">Service</td><td>${serviceName}</td></tr>
-        <tr><td style="padding:4px 12px 4px 0;color:#6B6B63;">Was scheduled for</td><td>${formatDateTime(slotDatetime)}</td></tr>
+        <tr><td style="padding:4px 12px 4px 0;color:#6B6B63;">Service</td><td>${escapeHtml(serviceName)}</td></tr>
+        <tr><td style="padding:4px 12px 4px 0;color:#6B6B63;">Was scheduled for</td><td>${escapeHtml(formatDateTime(slotDatetime))}</td></tr>
       </table>
       <p style="color:#6B6B63;">We hope to see you another time. ${CLINIC_ADDRESS}</p>
     </div>`

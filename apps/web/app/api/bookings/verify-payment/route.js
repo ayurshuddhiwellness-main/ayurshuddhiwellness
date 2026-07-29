@@ -7,14 +7,17 @@ import { requireAuth } from '../../../../lib/auth-middleware'
 import { ok, fail, guard } from '../../../../lib/api-response'
 import { verifyPayment } from '../../../../lib/payments'
 import { sendBookingConfirmation } from '../../../../lib/email'
+import { isValidDocId } from '../../../../lib/validation'
+import { enforceRateLimit } from '../../../../lib/rate-limit'
 
 export async function POST(request) {
   return guard(async () => {
+    enforceRateLimit(request, 'verify-payment', 10)
     const user = await requireAuth(request)
     const body = await request.json().catch(() => ({}))
     const { booking_id, razorpay_order_id, razorpay_payment_id, razorpay_signature } = body
 
-    if (!booking_id || !razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
+    if (!isValidDocId(booking_id) || !razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
       return fail(400, 'booking_id, razorpay_order_id, razorpay_payment_id and razorpay_signature are required')
     }
 

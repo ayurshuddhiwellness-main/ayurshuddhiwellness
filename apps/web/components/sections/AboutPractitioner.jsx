@@ -1,14 +1,21 @@
 'use client'
 
+import Image from 'next/image'
 import { motion, useReducedMotion } from 'framer-motion'
 import { EASE } from '../ui/motion'
+import MaskReveal from '../ui/MaskReveal'
+import AnimatedLink from '../ui/AnimatedLink'
 
 const CREDENTIALS = [
-  'BAMS Certified',
-  '15+ Years Practice',
-  '500+ Clients Treated',
+  'Nadi Vaidya',
+  'Ayurvedacharya',
+  'M.A. Yogic Science',
+  '10+ Years of Practice',
 ]
 
+// NOTE: `reduce` swaps the *variant objects* (whose transitions differ) but the
+// `initial="hidden"` prop and DOM structure stay constant — `useReducedMotion()`
+// is false during SSR/first client render, so branching those strands elements.
 const container = {
   hidden: {},
   visible: { transition: { staggerChildren: 0.09 } },
@@ -19,71 +26,172 @@ const item = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: EASE } },
 }
 
-export default function AboutPractitioner() {
+const itemStill = {
+  hidden: { opacity: 0, y: 16 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0 } },
+}
+
+// Credential pills arrive individually rather than as one block.
+const pills = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.07, delayChildren: 0.1 } },
+}
+
+const pill = {
+  hidden: { opacity: 0, y: 10 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: EASE } },
+}
+
+const pillStill = {
+  hidden: { opacity: 0, y: 10 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0 } },
+}
+
+/* `id` is passed only by the homepage, which uses this as its About section and
+   needs the "/#about" nav target. On /about the page hero already owns that id,
+   so passing it here too would duplicate it. */
+export default function AboutPractitioner({ exploreLink = false, id }) {
   const reduce = useReducedMotion()
-  const animated = !reduce
+  const it = reduce ? itemStill : item
 
   return (
-    <section className="bg-white px-6 py-24 lg:px-12">
+    <section
+      id={id}
+      /* scroll-mt-16 clears the 64px sticky navbar when arriving via /#about */
+      className="scroll-mt-16 overflow-x-hidden bg-card px-6 py-24 lg:px-12 lg:py-32"
+    >
       <motion.div
-        className="mx-auto grid max-w-content items-center gap-12 md:grid-cols-12 md:gap-16"
-        variants={animated ? container : undefined}
-        initial={animated ? 'hidden' : false}
-        whileInView={animated ? 'visible' : undefined}
+        className="mx-auto grid max-w-content items-center gap-14 md:grid-cols-12 md:gap-16"
+        variants={container}
+        initial="hidden"
+        whileInView="visible"
         viewport={{ once: true, margin: '-100px' }}
       >
-        {/* Left — Text */}
+        {/* Left — portrait, with a sage block offset behind the frame */}
+        <motion.div variants={it} className="md:col-span-5">
+          <div className="relative">
+            {/* Offset block slides into place from under the frame */}
+            <motion.div
+              aria-hidden="true"
+              className="absolute -bottom-4 -left-4 h-full w-full rounded-2xl bg-primary/10"
+              initial={{ x: 12, y: -12, opacity: 0 }}
+              whileInView={{ x: 0, y: 0, opacity: 1 }}
+              viewport={{ once: true, margin: '-80px' }}
+              transition={
+                reduce
+                  ? { duration: 0 }
+                  : { duration: 1, ease: EASE, delay: 0.25 }
+              }
+            />
+
+            <div className="relative aspect-[3/4] overflow-hidden rounded-2xl border border-border bg-background">
+              {/* Source is landscape; the crop is pushed right so the subject
+                  stays in frame inside the portrait aperture. */}
+              <Image
+                src="/images/about/abhirath.JPG"
+                alt="Acharya Abbhiraath Singh writing consultation notes at his desk"
+                fill
+                sizes="(min-width: 768px) 40vw, 92vw"
+                className="object-cover object-[70%_center]"
+              />
+
+              {/* Same retracting panel the story images use, so the two
+                  columns of the page reveal with one shared gesture. */}
+              <motion.div
+                aria-hidden="true"
+                className="absolute inset-0 origin-top bg-card"
+                initial={{ scaleY: 1 }}
+                whileInView={{ scaleY: 0 }}
+                viewport={{ once: true, margin: '-80px' }}
+                transition={
+                  reduce ? { duration: 0 } : { duration: 1.05, ease: EASE }
+                }
+              />
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Right — credentials and copy */}
         <div className="md:col-span-7">
           <motion.p
-            variants={animated ? item : undefined}
+            variants={it}
             className="mb-4 font-sans text-sm uppercase tracking-[0.25em] text-primary"
           >
             Your Practitioner
           </motion.p>
 
-          <motion.h2
-            variants={animated ? item : undefined}
-            className="font-serif text-4xl font-normal leading-tight text-foreground"
-          >
-            Guided by experience.
-          </motion.h2>
+          <h2 className="font-serif text-4xl font-normal leading-tight text-foreground md:text-5xl">
+            <MaskReveal reduce={reduce}>Acharya Abbhiraath Singh</MaskReveal>
+          </h2>
 
           <motion.p
-            variants={animated ? item : undefined}
-            className="mt-5 max-w-md font-sans text-lg leading-relaxed text-muted"
+            variants={it}
+            className="mt-4 font-sans text-base tracking-wide text-primary"
           >
-            With years of dedicated study and clinical practice in Ayurvedic
-            medicine, our lead practitioner brings deep expertise in Panchakarma
-            therapy, herbal medicine, and personalised wellness planning.
+            Nadi Vaidya &amp; Ayurvedacharya
           </motion.p>
 
-          {/* Credential pills */}
+          <motion.p
+            variants={it}
+            className="mt-6 max-w-lg font-sans text-lg leading-relaxed text-muted"
+          >
+            Trained under Himalayan Gurus in the ancient art of pulse diagnosis,
+            he has spent over a decade developing an approach to health that
+            goes beyond symptoms and addresses the root cause of what the body
+            is experiencing. He holds a Master&rsquo;s degree in Yogic Science
+            with a specialisation in Nadi Vaidya, and works with individuals
+            across physical, emotional, and spiritual dimensions of well-being.
+          </motion.p>
+
+          {/* Pull-quote — the sage rule draws down before the line lifts in */}
+          <motion.blockquote variants={it} className="relative mt-10 pl-6">
+            <motion.span
+              aria-hidden="true"
+              className="absolute left-0 top-0 h-full w-px origin-top bg-primary"
+              initial={{ scaleY: 0 }}
+              whileInView={{ scaleY: 1 }}
+              viewport={{ once: true, margin: '-80px' }}
+              transition={
+                reduce ? { duration: 0 } : { duration: 0.9, ease: EASE }
+              }
+            />
+            <p className="max-w-md font-serif text-2xl font-normal italic leading-snug text-foreground">
+              <MaskReveal reduce={reduce} duration={0.85} delay={0.2}>
+                Every person is different. Real healing begins only when those
+                differences are truly seen and understood.
+              </MaskReveal>
+            </p>
+          </motion.blockquote>
+
           <motion.div
-            variants={animated ? item : undefined}
-            className="mt-8 flex flex-wrap gap-3"
+            variants={pills}
+            className="mt-10 flex flex-wrap gap-3"
           >
             {CREDENTIALS.map((label) => (
-              <span
+              <motion.span
                 key={label}
+                variants={reduce ? pillStill : pill}
                 className="rounded-full border border-border px-4 py-1.5 font-sans text-xs tracking-wide text-foreground"
               >
                 {label}
-              </span>
+              </motion.span>
             ))}
           </motion.div>
-        </div>
 
-        {/* Right — Image placeholder */}
-        <motion.div
-          variants={animated ? item : undefined}
-          className="md:col-span-5"
-        >
-          <div className="flex aspect-[3/4] items-center justify-center rounded-2xl bg-[#E8E4DD]">
-            <span className="font-sans text-sm text-muted">
-              Practitioner portrait
-            </span>
-          </div>
-        </motion.div>
+          {/* Homepage only — on /about this section is already the destination,
+              so the link would point at the page you are standing on. */}
+          {exploreLink && (
+            <motion.div variants={it} className="mt-10">
+              <AnimatedLink
+                href="/about"
+                arrow
+                className="inline-flex items-center rounded-full bg-primary px-8 py-3.5 font-sans text-sm font-medium text-white transition-colors duration-300 hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card"
+              >
+                Explore Us
+              </AnimatedLink>
+            </motion.div>
+          )}
+        </div>
       </motion.div>
     </section>
   )

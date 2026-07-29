@@ -64,3 +64,20 @@ For multi-step tasks, state a brief plan:
 3. [Step] → verify: [check]
 
 Strong success criteria let you loop independently. Weak criteria ("make it work") require constant clarification.
+
+
+# Project Rules
+
+Always use the UI-UX Pro Max skill for:
+
+- UI design
+- UX improvements
+- Landing pages
+- React components
+- Tailwind styling
+- Color systems
+- Typography
+- Responsive layouts
+- Accessibility improvements
+
+For any frontend task, consult the UI-UX Pro Max skill before generating code.

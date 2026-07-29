@@ -16,11 +16,18 @@ export function isValidPhone(phone) {
   return typeof phone === 'string' && /^\d{10}$/.test(phone.trim())
 }
 
-// Valid calendar date, not in the future. Accepts "YYYY-MM-DD".
+// Document ids received from clients (service_id, booking_id) before they are
+// used in Firestore paths — blocks path separators and unbounded strings.
+export function isValidDocId(id) {
+  return typeof id === 'string' && /^[A-Za-z0-9_-]{1,128}$/.test(id)
+}
+
+// Valid calendar date, not in the future. Accepts "YYYY-MM-DD" only.
 export function isValidDob(dob) {
-  if (typeof dob !== 'string') return false
+  if (typeof dob !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(dob)) return false
   const d = new Date(dob)
   if (Number.isNaN(d.getTime())) return false
+  if (d.getFullYear() < 1900) return false
   // Compare against end of today so "today" is allowed.
   const now = new Date()
   return d.getTime() <= now.getTime()
@@ -44,6 +51,8 @@ export function validateProfileUpdate(body = {}) {
   if (body.name !== undefined) {
     if (typeof body.name !== 'string' || body.name.trim().length === 0) {
       errors.name = 'Name must be a non-empty string'
+    } else if (body.name.trim().length > 100) {
+      errors.name = 'Name must be 100 characters or fewer'
     } else {
       clean.name = body.name.trim()
     }

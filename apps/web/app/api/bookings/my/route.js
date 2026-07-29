@@ -24,12 +24,10 @@ export async function GET(request) {
     )]
     if (missing.length) {
       const names = {}
-      await Promise.all(
-        missing.map(async (sid) => {
-          const s = await db.collection('services').doc(sid).get()
-          if (s.exists) names[sid] = s.data().name
-        }),
-      )
+      const snaps = await db.getAll(...missing.map((sid) => db.collection('services').doc(sid)))
+      snaps.forEach((s) => {
+        if (s.exists) names[s.id] = s.data().name
+      })
       bookings.forEach((b) => {
         if (!b.service_name && names[b.service_id]) b.service_name = names[b.service_id]
       })

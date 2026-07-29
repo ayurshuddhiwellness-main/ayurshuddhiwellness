@@ -135,8 +135,8 @@ export default function AuthForm({ mode = 'login' }) {
     setErrors(next)
     if (Object.keys(next).length > 0) return
     setLoading(true)
-    // No real auth wiring yet — Firebase comes later.
-    console.log('[auth] submit', mode, values)
+    // No real auth wiring yet — Firebase comes later. Never log form values:
+    // they contain the plaintext password.
     setTimeout(() => setLoading(false), 1200)
   }
 

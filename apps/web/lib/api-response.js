@@ -27,7 +27,7 @@ export async function guard(fn) {
     const body = { success: false, data: null, error: 'Internal server error' }
     // In development, surface the real cause so failures are debuggable.
     // Production stays generic so internals are never leaked to clients.
-    if (process.env.NODE_ENV !== 'production') {
+    if (process.env.NODE_ENV === 'development') {
       body.error = err?.message || String(err)
       body.stack = err?.stack
     }

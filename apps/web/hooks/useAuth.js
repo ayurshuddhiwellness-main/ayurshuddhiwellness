@@ -4,9 +4,8 @@ import { useState, useEffect } from 'react'
 
 // Client-side auth state.
 //
-// TEMPORARY: the Firebase client SDK is not wired up yet, so this returns a mock
-// user after a short async delay (to mimic onAuthStateChanged resolving). The UI
-// is fully reviewable now.
+// TEMPORARY: the Firebase client SDK is not wired up yet, so this resolves a
+// mock user immediately. The UI is fully reviewable now.
 //
 // To preview the signed-out auth gate, visit /book?auth=out
 //
@@ -20,20 +19,16 @@ export function useAuth() {
   const [state, setState] = useState({ loading: true, user: null })
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      const signedOut =
-        typeof window !== 'undefined' &&
-        new URLSearchParams(window.location.search).get('auth') === 'out'
+    const signedOut =
+      typeof window !== 'undefined' &&
+      new URLSearchParams(window.location.search).get('auth') === 'out'
 
-      setState({
-        loading: false,
-        user: signedOut
-          ? null
-          : { uid: 'mock-user', email: 'guest@ayurshuddhi.com', displayName: 'Guest' },
-      })
-    }, 600)
-
-    return () => clearTimeout(timer)
+    setState({
+      loading: false,
+      user: signedOut
+        ? null
+        : { uid: 'mock-user', email: 'guest@ayurshuddhi.com', displayName: 'Guest' },
+    })
   }, [])
 
   return state

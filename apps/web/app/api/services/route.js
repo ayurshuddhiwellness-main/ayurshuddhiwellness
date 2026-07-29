@@ -3,9 +3,11 @@
 
 import { getDb } from '../../../lib/firebase-admin'
 import { ok, guard } from '../../../lib/api-response'
+import { enforceRateLimit } from '../../../lib/rate-limit'
 
-export async function GET() {
+export async function GET(request) {
   return guard(async () => {
+    enforceRateLimit(request, 'services', 60)
     const snap = await getDb()
       .collection('services')
       .where('active', '==', true)

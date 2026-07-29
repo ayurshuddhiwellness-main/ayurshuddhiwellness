@@ -2,9 +2,11 @@ import { Playfair_Display, Inter } from 'next/font/google'
 import './globals.css'
 import MotionProvider from '../components/ui/MotionProvider'
 
+// Only weights actually used in the codebase are loaded (Playfair 500 and
+// Inter 300 had zero usages) — fewer font files preloaded on every page.
 const playfair = Playfair_Display({
   subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
+  weight: ['400', '600', '700'],
   style: ['normal', 'italic'],
   variable: '--font-display',
   display: 'swap',
@@ -12,12 +14,13 @@ const playfair = Playfair_Display({
 
 const inter = Inter({
   subsets: ['latin'],
-  weight: ['300', '400', '500', '600'],
+  weight: ['400', '500', '600'],
   variable: '--font-inter',
   display: 'swap',
 })
 
 export const metadata = {
+  metadataBase: new URL('https://ayurshuddhiwellness.com'),
   title: 'AyurshuddhiWellness | Ayurvedic Wellness',
   description:
     'Rooted in ancient wisdom. Refined for modern living. Explore AyurshuddhiWellness\'s curated range of Ayurvedic wellness products.',
@@ -26,6 +29,10 @@ export const metadata = {
     description: 'Rooted in ancient wisdom. Refined for modern living.',
     type: 'website',
   },
+}
+
+export const viewport = {
+  themeColor: '#FAF8F5',
 }
 
 export default function RootLayout({ children }) {

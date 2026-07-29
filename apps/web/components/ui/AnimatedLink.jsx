@@ -1,7 +1,12 @@
 'use client'
 
+import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { EASE } from './motion'
+
+// next/link wrapped in motion so CTAs get client-side navigation + prefetch
+// instead of a full page reload, while keeping the micro-interaction.
+const MotionLink = motion.create(Link)
 
 // Restrained pill / link micro-interaction: a barely-there scale on hover,
 // a small inward press on tap, and an optional arrow that nudges right.
@@ -33,7 +38,7 @@ export default function AnimatedLink({
   onClick,
 }) {
   return (
-    <motion.a
+    <MotionLink
       href={href}
       onClick={onClick}
       className={className}
@@ -55,6 +60,6 @@ export default function AnimatedLink({
           →
         </motion.span>
       )}
-    </motion.a>
+    </MotionLink>
   )
 }

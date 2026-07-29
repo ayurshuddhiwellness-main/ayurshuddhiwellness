@@ -74,9 +74,11 @@ function _init() {
 // If a test sets globalThis.__FIRESTORE__ / globalThis.__AUTH__, we use those
 // and never load the real SDK. Guarded so it is inert in production.
 function _fakeDb() {
+  if (process.env.NODE_ENV !== 'test') return undefined
   return typeof globalThis !== 'undefined' ? globalThis.__FIRESTORE__ : undefined
 }
 function _fakeAuth() {
+  if (process.env.NODE_ENV !== 'test') return undefined
   return typeof globalThis !== 'undefined' ? globalThis.__AUTH__ : undefined
 }
 

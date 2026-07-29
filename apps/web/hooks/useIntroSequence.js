@@ -34,6 +34,26 @@ function clear() {
   timers = []
 }
 
+// The full splash plays once per browser session; revisits within the same
+// session skip straight to the settled hero so the page paints immediately.
+const SEEN_KEY = 'as-intro-seen'
+
+function introSeen() {
+  try {
+    return sessionStorage.getItem(SEEN_KEY) === '1'
+  } catch {
+    return false
+  }
+}
+
+function markIntroSeen() {
+  try {
+    sessionStorage.setItem(SEEN_KEY, '1')
+  } catch {
+    // Storage unavailable (privacy mode) — the splash simply replays.
+  }
+}
+
 // Routes without a Hero (/about, /services…) must not sit on an empty nav
 // slot indefinitely, so the sequence only arms itself if a Hero checked
 // in during this commit's effect pass — one frame is ample.
@@ -46,9 +66,18 @@ function start() {
       set('navbar')
       return
     }
+    if (introSeen()) {
+      set('hero')
+      return
+    }
     // Only the intro → hero leg is time-based.
     // hero → navbar is scroll-driven (see advanceToNavbar).
-    timers.push(setTimeout(() => set('hero'), POP_MS))
+    timers.push(
+      setTimeout(() => {
+        markIntroSeen()
+        set('hero')
+      }, POP_MS),
+    )
   })
 }
 
@@ -56,10 +85,12 @@ export function registerHero() {
   heroPresent = true
 }
 
-// Called by Hero.jsx when the user scrolls past the threshold.
+// Called by Hero.jsx when the user scrolls past the threshold. Scrolling away
+// mid-splash also counts as having seen the intro.
 export function advanceToNavbar() {
   if (phase === 'navbar') return
   clear()
+  markIntroSeen()
   set('navbar')
 }
 

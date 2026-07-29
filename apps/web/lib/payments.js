@@ -9,8 +9,12 @@
 
 import crypto from 'crypto'
 
+// Dummy mode is only ever active outside production, or when explicitly
+// opted into via PAYMENTS_DUMMY_MODE=true. In production without that flag,
+// verification takes the real HMAC path and fails closed — a booking can
+// never be confirmed with a forged dummy signature.
 export function isDummyMode() {
-  return true
+  return process.env.NODE_ENV !== 'production' || process.env.PAYMENTS_DUMMY_MODE === 'true'
 }
 
 // The publishable key id handed to the browser checkout.

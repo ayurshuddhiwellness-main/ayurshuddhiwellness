@@ -45,11 +45,11 @@ export async function PUT(request) {
     }
 
     const db = getDb()
-    await loadOrCreate(db, user) // ensure the doc exists
-    const ref = db.collection('users').doc(user.uid)
+    const { ref, data } = await loadOrCreate(db, user)
     await ref.set(clean, { merge: true })
 
-    const snap = await ref.get()
-    return ok({ uid: user.uid, ...snap.data() })
+    // loadOrCreate already returned the current doc — merge locally instead
+    // of re-reading it.
+    return ok({ ...data, ...clean })
   })
 }

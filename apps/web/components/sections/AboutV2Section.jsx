@@ -113,14 +113,28 @@ export default function AboutV2Section() {
 
   useEffect(() => {
     if (reduce) return
+    // rAF-throttled: at most one transform write per frame, using the
+    // freshest pointer position.
+    let frame = 0
+    let lastX = 0
+    let lastY = 0
     const onMove = (e) => {
-      const x = (e.clientX / window.innerWidth - 0.5) * 20
-      const y = (e.clientY / window.innerHeight - 0.5) * 20
-      const el = imgRefs.current[currentRef.current]
-      if (el) el.style.transform = `translate(${x}px, ${y}px) scale(1.06)`
+      lastX = e.clientX
+      lastY = e.clientY
+      if (frame) return
+      frame = requestAnimationFrame(() => {
+        frame = 0
+        const x = (lastX / window.innerWidth - 0.5) * 20
+        const y = (lastY / window.innerHeight - 0.5) * 20
+        const el = imgRefs.current[currentRef.current]
+        if (el) el.style.transform = `translate(${x}px, ${y}px) scale(1.06)`
+      })
     }
     window.addEventListener('mousemove', onMove, { passive: true })
-    return () => window.removeEventListener('mousemove', onMove)
+    return () => {
+      window.removeEventListener('mousemove', onMove)
+      if (frame) cancelAnimationFrame(frame)
+    }
   }, [reduce])
 
   return (
@@ -174,7 +188,7 @@ export default function AboutV2Section() {
                       src={slide.image}
                       alt={slide.alt}
                       fill
-                      sizes="100vw"
+                      sizes="(max-width: 768px) 100vw, 60vw"
                       className="object-cover object-[70%_center]"
                       priority={i === 0}
                     />

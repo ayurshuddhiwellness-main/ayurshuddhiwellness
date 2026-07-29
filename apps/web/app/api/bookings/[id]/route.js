@@ -6,6 +6,7 @@ import { getDb } from '../../../../lib/firebase-admin'
 import { requireAuth } from '../../../../lib/auth-middleware'
 import { ok, fail, guard } from '../../../../lib/api-response'
 import { sendCancellation } from '../../../../lib/email'
+import { isValidDocId } from '../../../../lib/validation'
 
 const TWENTY_FOUR_HOURS_MS = 24 * 60 * 60 * 1000
 
@@ -13,6 +14,7 @@ export async function DELETE(request, { params }) {
   return guard(async () => {
     const user = await requireAuth(request)
     const { id } = await params
+    if (!isValidDocId(id)) return fail(400, 'Invalid booking id')
 
     const db = getDb()
     const ref = db.collection('bookings').doc(id)

@@ -8,17 +8,24 @@
 import { getDb } from '../../../lib/firebase-admin'
 import { ok, fail, guard } from '../../../lib/api-response'
 import { computeAvailableSlots } from '../../../lib/slots'
+import { isValidDocId } from '../../../lib/validation'
+import { enforceRateLimit } from '../../../lib/rate-limit'
 
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/
 
+// Short edge cache: slightly stale availability is safe because POST
+// /api/bookings re-validates the slot authoritatively before writing.
+const CACHE = { 'Cache-Control': 'public, s-maxage=30, stale-while-revalidate=30' }
+
 export async function GET(request) {
   return guard(async () => {
+    enforceRateLimit(request, 'slots', 60)
     const { searchParams } = new URL(request.url)
     const serviceId = searchParams.get('service_id')
     const date = searchParams.get('date')
 
-    if (!serviceId || !date || !DATE_RE.test(date)) {
-      return fail(400, 'service_id and a valid date (YYYY-MM-DD) are required')
+    if (!isValidDocId(serviceId) || !date || !DATE_RE.test(date)) {
+      return fail(400, 'A valid service_id and date (YYYY-MM-DD) are required')
     }
 
     const db = getDb()
@@ -31,7 +38,7 @@ export async function GET(request) {
       .get()
 
     if (availSnap.empty) {
-      return ok({ date, service_id: serviceId, available_slots: [] })
+      return ok({ date, service_id: serviceId, available_slots: [] }, { headers: CACHE })
     }
 
     const avail = availSnap.docs[0].data()
@@ -57,6 +64,6 @@ export async function GET(request) {
       bookedSlots,
     })
 
-    return ok({ date, service_id: serviceId, available_slots: available })
+    return ok({ date, service_id: serviceId, available_slots: available }, { headers: CACHE })
   })
 }

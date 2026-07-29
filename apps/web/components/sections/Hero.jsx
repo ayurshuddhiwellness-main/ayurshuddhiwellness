@@ -56,8 +56,8 @@ export default function Hero() {
       return
     }
 
-    // Autoplay can still be refused (low power mode, data saver) — the poster
-    // frame stands in, so there is nothing to recover from.
+    // Autoplay can still be refused (low power mode, data saver) — the section
+    // background stands in, so there is nothing to recover from.
     const started = el.play()
     if (started) started.catch(() => {})
   }, [reduce])
@@ -170,7 +170,9 @@ export default function Hero() {
         <h1 className="sr-only">AyurshuddhiWellness</h1>
 
         {/* Backdrop — full-bleed loop, muted and inert. Autoplay is withheld
-            under reduced motion, leaving the poster frame as a still backdrop. */}
+            under reduced motion, leaving the section background as a still
+            backdrop. No poster: the referenced file never existed and 404'd
+            on every load. */}
         <video
           ref={videoRef}
           aria-hidden="true"
@@ -181,7 +183,6 @@ export default function Hero() {
           playsInline
           preload="metadata"
           suppressHydrationWarning
-          poster="/images/background_images/hero_page_bg_image.png"
           src="/videos/hero_background.mp4"
           className="pointer-events-none absolute inset-0 h-full w-full object-cover"
         />

@@ -1,0 +1,23 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Users can only read/write their own profile
+    match /users/{uid} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+    }
+    // Services and availability are public read, no client writes
+    match /services/{id} {
+      allow read: if true;
+      allow write: if false; // Admin SDK only
+    }
+    match /availability/{id} {
+      allow read: if true;
+      allow write: if false;
+    }
+    // Bookings: users can only read their own
+    match /bookings/{id} {
+      allow read: if request.auth != null && request.auth.uid == resource.data.user_id;
+      allow write: if false; // API routes only, never direct client writes
+    }
+  }
+}

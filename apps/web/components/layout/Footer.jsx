@@ -1,3 +1,5 @@
+import Link from 'next/link'
+
 export default function Footer() {
   const year = new Date().getFullYear()
 
@@ -70,15 +72,15 @@ export default function Footer() {
                 { label: 'Home', href: '/' },
                 { label: 'Services', href: '/services' },
                 { label: 'Blogs', href: '/blogs' },
-                { label: 'Contact', href: '/#contact' },
+                { label: 'Contact', href: '/contact' },
               ].map((link) => (
                 <li key={link.label}>
-                  <a
+                  <Link
                     href={link.href}
                     className="font-sans text-sm text-white/50 transition-all duration-300 hover:text-white"
                   >
                     {link.label}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -92,12 +94,12 @@ export default function Footer() {
             <ul className="mt-4 space-y-3">
               {['Ayurveda', 'Naturopathy', 'Panchakarma', 'Yoga & Meditation'].map((service) => (
                 <li key={service}>
-                  <a
+                  <Link
                     href="/services"
                     className="font-sans text-sm text-white/50 transition-all duration-300 hover:text-white"
                   >
                     {service}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
