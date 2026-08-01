@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { useScrolled } from '../../hooks/useScrolled'
+import { useOverMedia } from '../../hooks/useOverMedia'
 import { useIntroPhase } from '../../hooks/useIntroSequence'
 import { useActiveSection } from '../../hooks/useActiveSection'
 import AnimatedLink from '../ui/AnimatedLink'
@@ -32,6 +33,7 @@ const ROUTE_OWNERS = [
 
 export default function Navbar({ glass = false }) {
   const scrolled = useScrolled(10)
+  const onMedia = useOverMedia()
   const introPhase = useIntroPhase()
   const [menuOpen, setMenuOpen] = useState(false)
   const pathname = usePathname()
@@ -104,14 +106,26 @@ export default function Navbar({ glass = false }) {
   // cross-fading background + border on the shared easing curve — like glass settling.
   const solid = scrolled || menuOpen
 
+  /* Over a full-bleed photo or video the solid bar competes with the footage,
+     so there it thins to a frosted veil instead: no shadow, a hairline border,
+     and just enough linen behind the dark type to keep it legible. The mobile
+     menu is excluded — a drawer of links needs a real backing to sit on.
+
+     The fill has to go through color-mix: the theme colours are bare var()
+     values with no <alpha-value>, so `bg-background/55` would silently compile
+     to a fully opaque bar (same trap documented in Hero.jsx). */
+  const veiled = solid && onMedia && !menuOpen
+
   return (
     <header
       className={`sticky top-0 z-50 border-b transition-[background-color,border-color,box-shadow] duration-[400ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${
         glass
           ? 'border-white/10 bg-background/10 backdrop-blur-md'
-          : solid
-            ? 'border-border bg-background shadow-sm'
-            : 'border-transparent bg-transparent'
+          : veiled
+            ? 'border-white/15 bg-[color-mix(in_srgb,var(--color-background)_55%,transparent)] backdrop-blur-xl backdrop-saturate-150'
+            : solid
+              ? 'border-border bg-background shadow-sm'
+              : 'border-transparent bg-transparent'
       }`}
     >
       {/* Invisible until tabbed to — lets keyboard users past the nav */}

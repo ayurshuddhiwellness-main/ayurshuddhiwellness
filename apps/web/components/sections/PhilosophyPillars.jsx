@@ -2,7 +2,6 @@
 
 import { motion } from 'framer-motion'
 import { RevealGroup, RevealItem } from '../ui/Reveal'
-import AnimatedLink from '../ui/AnimatedLink'
 import { EASE } from '../ui/motion'
 
 /* ──────────────────────────────────────────────────────
@@ -99,15 +98,19 @@ export default function PhilosophyPillars() {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.15 }}
       transition={{ duration: 0.7, ease: EASE }}
-      className="relative z-10 scroll-mt-16 rounded-t-[2.5rem] bg-background px-6 py-24 shadow-[0_-20px_40px_-15px_rgba(0,0,0,0.08)] lg:px-12"
+      className="relative z-10 rounded-t-[2.5rem] bg-background px-6 py-24 shadow-[0_-20px_40px_-15px_rgba(0,0,0,0.08)] lg:px-12"
       id="services"
     >
-      {/* Section heading. "Our Philosophy" belongs to /about — here the belief
-          line carries the section on its own, at the heading's weight. */}
+      {/* Section heading — Philosophy framing */}
       <RevealGroup className="mx-auto max-w-xl text-center">
         <RevealItem>
-          <h2 className="font-serif text-4xl font-normal text-foreground">
+          <p className="mb-4 font-sans text-sm uppercase tracking-[0.25em] text-primary">
             What We Believe
+          </p>
+        </RevealItem>
+        <RevealItem>
+          <h2 className="font-serif text-4xl font-normal text-foreground">
+            Our Philosophy
           </h2>
         </RevealItem>
       </RevealGroup>
@@ -139,19 +142,6 @@ export default function PhilosophyPillars() {
             </div>
           </RevealItem>
         ))}
-      </RevealGroup>
-
-      {/* The three pillars are the headline offerings — the rest live on /services */}
-      <RevealGroup className="mt-16 text-center">
-        <RevealItem>
-          <AnimatedLink
-            href="/services"
-            arrow
-            className="inline-flex items-center rounded-full bg-primary px-7 py-3 font-sans text-sm font-medium text-white transition-colors duration-300 hover:bg-primary-hover"
-          >
-            Explore more services
-          </AnimatedLink>
-        </RevealItem>
       </RevealGroup>
     </motion.section>
   )

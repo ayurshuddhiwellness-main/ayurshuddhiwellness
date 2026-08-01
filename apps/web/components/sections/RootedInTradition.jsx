@@ -1,21 +1,40 @@
 import { RevealGroup, RevealItem } from '../ui/Reveal'
 import AnimatedLink from '../ui/AnimatedLink'
+import ServiceCard from '../ui/ServiceCard'
+import { SERVICE_ICONS } from '../ui/serviceIcons'
+import { SERVICES } from '../../lib/services'
+
+/* ──────────────────────────────────────────────────────
+   The homepage's services section.
+
+   Carries the three headline offerings, drawn from the same catalogue that
+   feeds /services so the copy and imagery never drift apart. The full nine
+   stay on /services, one link away.
+   ────────────────────────────────────────────────────── */
+
+const PILLAR_SLUGS = ['ayurveda', 'panchakarma', 'yoga-pranayama-meditation']
+
+const PILLARS = PILLAR_SLUGS.map((slug) =>
+  SERVICES.find((service) => service.slug === slug),
+)
 
 export default function RootedInTradition() {
   return (
-    <section className="bg-white px-6 py-24 lg:px-12">
-      <div className="mx-auto grid max-w-content items-center gap-12 md:grid-cols-12 md:gap-0">
-        {/* Left — product image placeholder */}
-        <RevealGroup className="md:col-span-7">
+    <section
+      id="services"
+      /* scroll-mt-16 clears the 64px sticky navbar when arriving via /#services */
+      className="scroll-mt-16 border-t border-border bg-white px-6 py-24 lg:px-12"
+    >
+      <div className="mx-auto max-w-content">
+        <RevealGroup className="mx-auto max-w-xl text-center">
+          {/* Both headings on this page open with "Rooted in tradition." — the
+              eyebrow is what tells them apart before the second line lands. */}
           <RevealItem>
-            <div className="flex aspect-[3/4] max-h-[600px] items-center justify-center rounded-2xl bg-[#E8E4DD]">
-              <span className="font-sans text-sm text-muted">Apothecary product image</span>
-            </div>
+            <p className="mb-4 font-sans text-sm uppercase tracking-[0.25em] text-primary">
+              Our Services
+            </p>
           </RevealItem>
-        </RevealGroup>
 
-        {/* Right — text content */}
-        <RevealGroup className="md:col-span-5 md:pl-20">
           <RevealItem>
             <h2 className="font-serif text-4xl font-normal leading-tight text-foreground md:text-5xl">
               Rooted in tradition.
@@ -25,29 +44,49 @@ export default function RootedInTradition() {
           </RevealItem>
 
           <RevealItem className="mt-6">
-            <p className="max-w-sm font-sans text-base leading-relaxed text-muted">
+            <p className="font-sans text-lg leading-relaxed text-muted">
               AyurshuddhiWellness is a few words about holistic meditation and improve your mind, with organic set of treatments.
             </p>
           </RevealItem>
+        </RevealGroup>
 
-          <RevealItem className="mt-8">
-            <div className="flex items-center gap-6">
-              <AnimatedLink
-                href="#contact"
-                arrow
-                className="inline-flex items-center rounded-full bg-primary px-7 py-3 font-sans text-sm font-medium text-white transition-colors duration-300 hover:bg-primary-hover"
-              >
-                Book Now
-              </AnimatedLink>
-              <AnimatedLink
-                href="#"
-                arrow
-                scale={false}
-                className="inline-flex items-center font-sans text-sm text-foreground underline underline-offset-4 transition-colors duration-300 hover:text-primary"
-              >
-                Read more
-              </AnimatedLink>
-            </div>
+        <RevealGroup className="mt-16 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+          {PILLARS.map((service) => (
+            <RevealItem key={service.slug}>
+              <ServiceCard
+                title={service.title}
+                body={service.cardBody}
+                image={service.image}
+                alt={service.alt}
+                icon={SERVICE_ICONS[service.slug]}
+                imageFit={service.imageFit}
+                href={`/${service.slug}`}
+              />
+            </RevealItem>
+          ))}
+        </RevealGroup>
+
+        <RevealGroup className="mt-16 flex flex-wrap items-center justify-center gap-x-8 gap-y-4">
+          <RevealItem>
+            <AnimatedLink
+              href="#contact"
+              arrow
+              className="inline-flex items-center rounded-full bg-primary px-7 py-3 font-sans text-sm font-medium text-white transition-colors duration-300 hover:bg-primary-hover"
+            >
+              Book Now
+            </AnimatedLink>
+          </RevealItem>
+
+          {/* The three pillars are the headline offerings — the rest live on /services */}
+          <RevealItem>
+            <AnimatedLink
+              href="/services"
+              arrow
+              scale={false}
+              className="inline-flex items-center font-sans text-sm text-foreground underline underline-offset-4 transition-colors duration-300 hover:text-primary"
+            >
+              Explore more services
+            </AnimatedLink>
           </RevealItem>
         </RevealGroup>
       </div>
