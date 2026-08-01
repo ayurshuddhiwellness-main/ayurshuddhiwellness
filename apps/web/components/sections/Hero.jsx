@@ -1,6 +1,7 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useState } from 'react'
+import Image from 'next/image'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { EASE } from '../ui/motion'
 import {
@@ -26,10 +27,25 @@ const TRAVEL = { duration: 0.9, ease: EASE }
 // a 327px line, so anything past ~1.27 would be clipped by the section.
 const SPLASH_SCALE = 1.25
 
+// Backdrop stills. Add a photograph by adding its path here; the rotation
+// length follows the array.
+// Extensions are load-bearing: these resolve case-insensitively on Windows but
+// byte-exactly on the Linux host, so a name that only works locally 404s in
+// production. Slide 2 stays lowercase because that is the name git has tracked
+// since before the .JPG re-import — see NOTES in the commit that added these.
+const SLIDES = [
+  '/images/practitioner/founder_image_1.JPG',
+  '/images/practitioner/founder_image_2.jpg',
+  '/images/practitioner/founder_image_3.JPG',
+]
+
+const SLIDE_MS = 4500
+const FADE_MS = 1000
+
 export default function Hero() {
   const reduce = useReducedMotion()
   const phase = useIntroPhase()
-  const videoRef = useRef(null)
+  const [slide, setSlide] = useState(0)
 
   // Tells the store a Hero exists on this route, so the sequence actually arms.
   useEffect(() => {
@@ -41,25 +57,16 @@ export default function Hero() {
     if (reduce) skipIntro()
   }, [reduce])
 
-  // `muted` is a DOM property browsers and extensions rewrite independently of
-  // the attribute, so React's hydration check can disagree with the markup it
-  // shipped. Re-assert it as a property and drive playback from here, which
-  // also keeps the loop honest when the user prefers reduced motion.
+  // Advance the backdrop. Reduced motion holds on the opening frame rather
+  // than cycling.
   useEffect(() => {
-    const el = videoRef.current
-    if (!el) return
+    if (reduce || SLIDES.length < 2) return
 
-    el.muted = true
-
-    if (reduce) {
-      el.pause()
-      return
-    }
-
-    // Autoplay can still be refused (low power mode, data saver) — the section
-    // background stands in, so there is nothing to recover from.
-    const started = el.play()
-    if (started) started.catch(() => {})
+    const id = setInterval(
+      () => setSlide((i) => (i + 1) % SLIDES.length),
+      SLIDE_MS,
+    )
+    return () => clearInterval(id)
   }, [reduce])
 
   // Scroll trigger: once the user scrolls past 100px, advance to the navbar
@@ -164,28 +171,38 @@ export default function Hero() {
         )}
       </AnimatePresence>
 
-      <section className="relative flex min-h-[70vh] flex-col items-center justify-center overflow-hidden bg-background px-6 py-24 text-center md:min-h-[85vh] lg:px-12">
+      {/* Exactly one viewport, clipped. At 85vh the section below used to show
+          a sliver of itself under the fold from the very first frame; a full
+          100vh means the hero owns the screen outright and the next section
+          only exists once you have scrolled for it. */}
+      <section
+        data-media-backdrop
+        className="relative flex h-screen flex-col items-center justify-center overflow-hidden bg-background px-6 py-24 text-center lg:px-12"
+      >
         {/* The document heading stays put even after the visible mark flies up
             to the nav bar, so the page never ends up without an h1. */}
         <h1 className="sr-only">AyurshuddhiWellness</h1>
 
-        {/* Backdrop — full-bleed loop, muted and inert. Autoplay is withheld
-            under reduced motion, leaving the section background as a still
-            backdrop. No poster: the referenced file never existed and 404'd
-            on every load. */}
-        <video
-          ref={videoRef}
-          aria-hidden="true"
-          tabIndex={-1}
-          autoPlay={!reduce}
-          loop
-          muted
-          playsInline
-          preload="metadata"
-          suppressHydrationWarning
-          src="/videos/hero_background.mp4"
-          className="pointer-events-none absolute inset-0 h-full w-full object-cover"
-        />
+        {/* Backdrop — full-bleed stills, crossfading and inert. Under reduced
+            motion the rotation holds on the opening frame. */}
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0">
+          {SLIDES.map((src, i) => (
+            <Image
+              key={src}
+              src={src}
+              alt=""
+              fill
+              sizes="100vw"
+              // The opening frame is the largest thing above the fold.
+              priority={i === 0}
+              className="object-cover transition-opacity ease-linear motion-reduce:transition-none"
+              style={{
+                opacity: i === slide ? 1 : 0,
+                transitionDuration: `${FADE_MS}ms`,
+              }}
+            />
+          ))}
+        </div>
 
         {/* Depth scrim — a light cinematic vignette, weighted to the edges so
             the middle of the frame keeps the footage's own colour. */}

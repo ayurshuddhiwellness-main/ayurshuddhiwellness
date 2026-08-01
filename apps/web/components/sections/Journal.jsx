@@ -3,7 +3,14 @@ import AnimatedLink from '../ui/AnimatedLink'
 
 export default function Journal() {
   return (
-    <section id="journal" className="bg-white px-6 py-24 lg:px-12">
+    /* Warm linen against the white services section above, so the two read as
+       two surfaces rather than one long slab — the same alternation the page
+       already runs from AboutPractitioner onward. The hairline makes the
+       handover explicit at speed, when the tint alone can slip past. */
+    <section
+      id="journal"
+      className="border-t border-border bg-card px-6 py-24 lg:px-12"
+    >
       <div className="mx-auto grid max-w-content items-center gap-12 md:grid-cols-12 md:gap-0">
         {/* Left — text content */}
         <RevealGroup className="md:col-span-7 md:pr-20">
