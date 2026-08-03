@@ -79,7 +79,12 @@ export default function ServiceCard({
       onBlur={handleBlur}
     >
       <div
-        className={`relative aspect-[4/5] w-full cursor-pointer transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] [transform-style:preserve-3d] motion-reduce:transition-none ${
+        /* A fixed height rather than an aspect ratio: the card is as short as
+           its turned face allows (40px icon, title, two clamped lines, the
+           button — about 210px inside p-5) and takes whatever width its grid
+           track gives it. An aspect ratio would have tied height back to width
+           and stretched the card again on the wider tracks. */
+        className={`relative h-64 w-full cursor-pointer transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] [transform-style:preserve-3d] motion-reduce:transition-none ${
           flipped
             ? '[transform:rotateY(180deg)] motion-reduce:[transform:none]'
             : ''
@@ -118,8 +123,8 @@ export default function ServiceCard({
             className="absolute inset-x-0 bottom-0 h-3/5 bg-gradient-to-t from-black/85 via-black/45 to-transparent"
           />
 
-          <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-4 p-6">
-            <h3 className="font-serif text-xl font-normal leading-snug text-white md:text-2xl">
+          <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-4 p-5">
+            <h3 className="font-serif text-xl font-normal leading-snug text-white">
               {title}
             </h3>
 
@@ -150,7 +155,7 @@ export default function ServiceCard({
 
         {/* ── Back — description ─────────────────────────────────────────── */}
         <div
-          className={`${FACE} flex flex-col bg-primary p-7 [transform:rotateY(180deg)] motion-reduce:transition-opacity motion-reduce:duration-200 motion-reduce:[transform:none] ${
+          className={`${FACE} flex flex-col bg-primary p-5 [transform:rotateY(180deg)] motion-reduce:transition-opacity motion-reduce:duration-200 motion-reduce:[transform:none] ${
             flipped
               ? 'motion-reduce:opacity-100'
               : 'pointer-events-none motion-reduce:opacity-0'
@@ -163,18 +168,20 @@ export default function ServiceCard({
 
           <div className="text-white">{icon}</div>
 
-          <h3 className="mt-5 font-serif text-xl font-normal leading-snug text-white">
+          <h3 className="mt-4 font-serif text-xl font-normal leading-snug text-white">
             {title}
           </h3>
 
-          <p className="mt-3 font-sans text-sm leading-relaxed text-white/75">
+          {/* Clamped to two lines. The full description is the service's own
+              page, which the button below goes to. */}
+          <p className="mt-2 line-clamp-2 font-sans text-sm leading-relaxed text-white/75">
             {body}
           </p>
 
           <AnimatedLink
             href={href}
             arrow
-            className="relative z-20 mt-auto inline-flex w-fit items-center rounded-full bg-white px-5 py-3 font-sans text-sm font-medium text-primary transition-colors duration-300 hover:bg-white/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-primary"
+            className="relative z-20 mt-auto inline-flex w-fit items-center rounded-full bg-white px-4 py-2.5 font-sans text-sm font-medium text-primary transition-colors duration-300 hover:bg-white/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-primary"
           >
             Read More
           </AnimatedLink>

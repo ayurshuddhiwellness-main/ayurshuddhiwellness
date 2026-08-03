@@ -38,3 +38,9 @@
     text-wrap: balance;
   }
 }
+
+/* The homepage's opening sections are advanced by SectionLock, which cancels
+   the gesture and animates the scroll itself. No CSS scroll-snap here on
+   purpose: snap only corrects a scroll after the browser has already run it,
+   so the two would each be moving the same scroller — the stutter that the
+   gesture lock replaced. `[data-snap-section]` marks the stops for it. */

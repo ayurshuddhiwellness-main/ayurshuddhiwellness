@@ -1,6 +1,7 @@
 import dynamic from 'next/dynamic'
 import Navbar from '../components/layout/Navbar'
 import Footer from '../components/layout/Footer'
+import SectionLock from '../components/ui/SectionLock'
 import Hero from '../components/sections/Hero'
 import RootedInTradition from '../components/sections/RootedInTradition'
 import Journal from '../components/sections/Journal'
@@ -19,6 +20,8 @@ export const metadata = {
 export default function HomePage() {
   return (
     <>
+      {/* One gesture per section across the opening two; native scrolling after */}
+      <SectionLock />
       <Navbar />
       <main>
         {/* 1 — Landing hero */}

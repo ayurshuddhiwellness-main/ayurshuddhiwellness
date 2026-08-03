@@ -155,7 +155,11 @@ export default function Philosophy() {
     : { whileInView: 'visible', viewport: { once: true, amount: 0.3 } }
 
   return (
-    <section ref={wrapperRef} className="relative z-10 motion-safe:md:h-[250vh]">
+    <section
+      ref={wrapperRef}
+      data-snap-section
+      className="relative z-10 motion-safe:md:h-[250vh]"
+    >
       {/* The pinned frame. Height is exact rather than a minimum, and the
           overflow is clipped, so the frame can never grow past the viewport
           and let the section below peer out from under the pin. */}

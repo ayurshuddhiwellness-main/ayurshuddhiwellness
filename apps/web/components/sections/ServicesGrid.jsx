@@ -33,6 +33,8 @@ export default function ServicesGrid() {
           </RevealItem>
         </RevealGroup>
 
+        {/* Same three tracks as the homepage's featured row, so a card is the
+            same shape on both pages. */}
         <RevealGroup className="mt-16 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
           {SERVICES.map((service, i) => (
             <RevealItem key={service.slug}>

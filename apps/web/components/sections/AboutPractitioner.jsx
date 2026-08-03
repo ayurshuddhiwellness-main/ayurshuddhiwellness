@@ -8,9 +8,9 @@ import AnimatedLink from '../ui/AnimatedLink'
 
 const CREDENTIALS = [
   'Nadi Vaidya',
-  'Ayurvedacharya',
-  'M.A. Yogic Science',
-  '10+ Years of Practice',
+  'Ayurveda',
+  'Human Design',
+  'Spirituality',
 ]
 
 // NOTE: `reduce` swaps the *variant objects* (whose transitions differ) but the
