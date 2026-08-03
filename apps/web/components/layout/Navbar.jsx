@@ -108,13 +108,20 @@ export default function Navbar({ glass = false }) {
 
   /* Over a full-bleed photo or video the solid bar competes with the footage,
      so there it thins to a frosted veil instead: no shadow, a hairline border,
-     and just enough linen behind the dark type to keep it legible. The mobile
-     menu is excluded — a drawer of links needs a real backing to sit on.
+     and just enough tint behind the type to keep it legible. The mobile menu is
+     excluded — a drawer of links needs a real backing to sit on.
 
-     The fill has to go through color-mix: the theme colours are bare var()
-     values with no <alpha-value>, so `bg-background/55` would silently compile
-     to a fully opaque bar (same trap documented in Hero.jsx). */
+     The tint is a deep pine rather than the linen background token: it holds
+     the footage down instead of washing it out, and it is the same family as
+     the sage primary rather than a second hue. The fill has to go through
+     color-mix either way — the theme colours are bare var() values with no
+     <alpha-value>, so `bg-background/55` would silently compile to a fully
+     opaque bar (same trap documented in Hero.jsx). */
   const veiled = solid && onMedia && !menuOpen
+
+  // Both the veil and the `glass` routes put the bar over something dark, so
+  // the type, the mark and the outlined button all invert together.
+  const onDark = glass || veiled
 
   return (
     <header
@@ -122,7 +129,7 @@ export default function Navbar({ glass = false }) {
         glass
           ? 'border-white/10 bg-background/10 backdrop-blur-md'
           : veiled
-            ? 'border-white/15 bg-[color-mix(in_srgb,var(--color-background)_55%,transparent)] backdrop-blur-xl backdrop-saturate-150'
+            ? 'border-white/15 bg-[color-mix(in_srgb,#16302E_55%,transparent)] backdrop-blur-xl backdrop-saturate-150'
             : solid
               ? 'border-border bg-background shadow-sm'
               : 'border-transparent bg-transparent'
@@ -159,14 +166,18 @@ export default function Navbar({ glass = false }) {
               >
                 <span
                   className={`font-bold tracking-[-0.02em] ${
-                    glass ? 'text-background' : 'text-foreground'
+                    onDark ? 'text-background' : 'text-foreground'
                   }`}
                 >
                   Ayurshuddhi
                 </span>
                 <span
+                  /* text-white/80, not text-background/80: the theme colours
+                     are bare var() values with no <alpha-value>, so the alpha
+                     modifier silently drops the whole declaration and the word
+                     fell back to the inherited dark foreground. */
                   className={`font-normal italic ${
-                    glass ? 'text-background/80' : 'text-primary'
+                    onDark ? 'text-white/80' : 'text-primary'
                   }`}
                 >
                   Wellness
@@ -195,10 +206,13 @@ export default function Navbar({ glass = false }) {
                    colours are bare var() values and the /alpha syntax compiles
                    to nothing against them. */
                 className={`rounded-full px-4 py-2 font-sans text-sm uppercase tracking-widest transition-[color,background-color,transform,box-shadow] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 hover:shadow-soft active:translate-y-0 active:scale-[0.97] motion-reduce:transition-colors motion-reduce:hover:translate-y-0 motion-reduce:active:scale-100 ${
-                  glass
+                  onDark
                     ? active
                       ? 'bg-white/25 font-medium text-white'
-                      : 'text-white/70 hover:bg-white/15 hover:text-white'
+                      : /* /80 rather than /70: the veil sits over photographs
+                           whose bright frames leave the lighter tone short of
+                           4.5:1. */
+                        'text-white/80 hover:bg-white/15 hover:text-white'
                     : active
                       ? 'bg-[color-mix(in_srgb,var(--color-primary)_18%,transparent)] font-medium text-primary shadow-[inset_0_0_0_1px_color-mix(in_srgb,var(--color-primary)_35%,transparent)]'
                       : 'text-muted hover:bg-[color-mix(in_srgb,var(--color-primary)_8%,transparent)] hover:text-foreground'
@@ -215,7 +229,7 @@ export default function Navbar({ glass = false }) {
           <Link
             href="/login"
             className={`rounded-full border px-5 py-2 font-sans text-sm font-medium transition-[color,background-color,border-color,transform,box-shadow] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 hover:shadow-soft active:translate-y-0 active:scale-[0.97] motion-reduce:transition-colors motion-reduce:hover:translate-y-0 motion-reduce:active:scale-100 ${
-              glass
+              onDark
                 ? 'border-white/30 text-white hover:bg-white/15'
                 : 'border-border text-foreground hover:border-primary hover:text-primary'
             }`}
@@ -246,7 +260,7 @@ export default function Navbar({ glass = false }) {
             stroke="currentColor"
             strokeWidth="1.5"
             strokeLinecap="round"
-            className="text-foreground"
+            className={onDark ? 'text-white' : 'text-foreground'}
           >
             {menuOpen ? (
               <>
