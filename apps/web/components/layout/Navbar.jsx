@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { useScrolled } from '../../hooks/useScrolled'
 import { useOverMedia } from '../../hooks/useOverMedia'
-import { useIntroPhase } from '../../hooks/useIntroSequence'
+import { introWasSkipped, useIntroPhase } from '../../hooks/useIntroSequence'
 import { useActiveSection } from '../../hooks/useActiveSection'
 import AnimatedLink from '../ui/AnimatedLink'
 import { EASE } from '../ui/motion'
@@ -145,10 +145,13 @@ export default function Navbar({ glass = false }) {
           aria-label="AyurshuddhiWellness — home"
           className="flex h-10 w-52 shrink-0 items-center"
         >
+          {/* The arriving half of the layoutId handoff drives the flight, so a
+              visitor who has already spent the intro needs it neutralised here
+              too — otherwise the mark still travels in from the hero on load. */}
           {introPhase === 'navbar' && (
             <motion.div
               layoutId="brand-wordmark"
-              transition={{ duration: 0.9, ease: EASE }}
+              transition={introWasSkipped() ? { duration: 0 } : { duration: 0.9, ease: EASE }}
             >
               <span
                 aria-hidden="true"

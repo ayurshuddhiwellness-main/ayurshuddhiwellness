@@ -17,7 +17,42 @@ import { useSyncExternalStore } from 'react'
 
 export const POP_MS = 1500
 
-let phase = 'intro'
+// The sequence — splash, settle, travel to the nav bar — is a first-visit
+// welcome, so it plays once per browser and never again: reloads and later
+// visits open with the mark already parked. localStorage rather than
+// sessionStorage is what makes it survive the reload.
+const SEEN_KEY = 'as-intro-seen'
+
+function introSeen() {
+  try {
+    return localStorage.getItem(SEEN_KEY) === '1'
+  } catch {
+    return false
+  }
+}
+
+function markIntroSeen() {
+  try {
+    localStorage.setItem(SEEN_KEY, '1')
+  } catch {
+    // Storage unavailable (privacy mode) — the splash simply replays.
+  }
+}
+
+/* Resolved at module evaluation, which on the client runs before anything
+   renders. The hook below can't carry this: React feeds the hydration render
+   the *server* snapshot ('intro'), so a returning visitor's markup still
+   arrives mid-splash and is corrected a beat later. Components read this
+   directly to make that correction instant instead of animated — without it
+   the mark would fly hero → nav bar on every single load, which is precisely
+   the once-only choreography. */
+const skipped = introSeen()
+
+export function introWasSkipped() {
+  return skipped
+}
+
+let phase = skipped ? 'navbar' : 'intro'
 let heroPresent = false
 let started = false
 let timers = []
@@ -34,26 +69,6 @@ function clear() {
   timers = []
 }
 
-// The full splash plays once per browser session; revisits within the same
-// session skip straight to the settled hero so the page paints immediately.
-const SEEN_KEY = 'as-intro-seen'
-
-function introSeen() {
-  try {
-    return sessionStorage.getItem(SEEN_KEY) === '1'
-  } catch {
-    return false
-  }
-}
-
-function markIntroSeen() {
-  try {
-    sessionStorage.setItem(SEEN_KEY, '1')
-  } catch {
-    // Storage unavailable (privacy mode) — the splash simply replays.
-  }
-}
-
 // Routes without a Hero (/about, /services…) must not sit on an empty nav
 // slot indefinitely, so the sequence only arms itself if a Hero checked
 // in during this commit's effect pass — one frame is ample.
@@ -61,13 +76,12 @@ function start() {
   if (started) return
   started = true
 
+  // Already parked from the module-level resolution above — nothing to arm.
+  if (skipped) return
+
   requestAnimationFrame(() => {
     if (!heroPresent) {
       set('navbar')
-      return
-    }
-    if (introSeen()) {
-      set('hero')
       return
     }
     // Only the intro → hero leg is time-based.

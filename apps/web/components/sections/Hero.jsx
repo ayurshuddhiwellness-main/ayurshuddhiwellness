@@ -8,6 +8,7 @@ import {
   registerHero,
   skipIntro,
   advanceToNavbar,
+  introWasSkipped,
   useIntroPhase,
 } from '../../hooks/useIntroSequence'
 
@@ -47,6 +48,19 @@ export default function Hero() {
   const phase = useIntroPhase()
   const [slide, setSlide] = useState(0)
 
+  /* Two ways of arriving with nothing to play: motion is unwelcome, or the
+     welcome has already been spent on an earlier visit. Both want the same
+     thing — the mark simply already home, with no leg animated on the way.
+
+     Read straight from the module rather than through the hook, so it is
+     already true during the hydration render — the one that hands the mark
+     over to the nav bar. That makes it a client-only value the server cannot
+     know, so it may only ever reach a `transition`, which contributes nothing
+     to rendered output. Letting it near `initial` or a variant's *state* would
+     make the hydrated DOM disagree with the shipped HTML, and React does not
+     patch style mismatches up. */
+  const instant = reduce || introWasSkipped()
+
   // Tells the store a Hero exists on this route, so the sequence actually arms.
   useEffect(() => {
     registerHero()
@@ -85,18 +99,20 @@ export default function Hero() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [reduce])
 
-  // Each part lifts out of its own clipped frame in sequence. Under reduced
-  // motion every child resolves instantly at its final state.
+  // Each part lifts out of its own clipped frame in sequence. With nothing to
+  // play, every child resolves instantly at its final state.
   const wordmark = {
     hidden: {},
     visible: {
       transition: {
-        delayChildren: reduce ? 0 : 0.15,
-        staggerChildren: reduce ? 0 : 0.14,
+        delayChildren: instant ? 0 : 0.15,
+        staggerChildren: instant ? 0 : 0.14,
       },
     },
   }
 
+  // Only the duration answers to `instant`: the two states have to stay exactly
+  // as the server rendered them (see above).
   const word = reduce
     ? { hidden: { opacity: 1, y: '0%' }, visible: { opacity: 1, y: '0%' } }
     : {
@@ -104,7 +120,7 @@ export default function Hero() {
         visible: {
           opacity: 1,
           y: '0%',
-          transition: { duration: 1.1, ease: EASE },
+          transition: { duration: instant ? 0 : 1.1, ease: EASE },
         },
       }
 
@@ -121,12 +137,12 @@ export default function Hero() {
   const mark = (
     <motion.div
       layoutId="brand-wordmark"
-      transition={reduce ? { duration: 0 } : TRAVEL}
+      transition={instant ? { duration: 0 } : TRAVEL}
     >
       <motion.div
         initial={false}
         animate={{ scale: phase === 'intro' ? SPLASH_SCALE : 1 }}
-        transition={reduce ? { duration: 0 } : { duration: 0.95, ease: EASE }}
+        transition={instant ? { duration: 0 } : { duration: 0.95, ease: EASE }}
       >
         {/* aria-hidden: the real heading is the sr-only h1, so the travelling
             copy is never announced twice. */}
@@ -166,7 +182,7 @@ export default function Hero() {
             className="fixed inset-0 z-[55] bg-background"
             initial={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.55, ease: EASE }}
+            transition={instant ? { duration: 0 } : { duration: 0.55, ease: EASE }}
           />
         )}
       </AnimatePresence>
@@ -221,7 +237,7 @@ export default function Hero() {
           className="pointer-events-none absolute inset-0"
           initial={false}
           animate={{ opacity: marksHere ? 1 : 0 }}
-          transition={reduce ? { duration: 0 } : { duration: 0.9, ease: EASE }}
+          transition={instant ? { duration: 0 } : { duration: 0.9, ease: EASE }}
           style={{
             background:
               'radial-gradient(ellipse 65% 42% at 50% 50%, color-mix(in srgb, var(--color-background) 78%, transparent) 0%, color-mix(in srgb, var(--color-background) 40%, transparent) 55%, transparent 78%)',
