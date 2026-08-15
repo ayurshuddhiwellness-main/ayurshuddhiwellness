@@ -30,6 +30,10 @@ export default function ContactForm() {
   const [values, setValues] = useState(EMPTY)
   const [errors, setErrors] = useState({})
   const [sent, setSent] = useState(false)
+  const [sending, setSending] = useState(false)
+  // Whatever the server said went wrong — shown above the button, since it
+  // belongs to the submission rather than to any one field.
+  const [sendError, setSendError] = useState(null)
 
   const update = (field) => (e) => {
     setValues((v) => ({ ...v, [field]: e.target.value }))
@@ -50,8 +54,9 @@ export default function ContactForm() {
     }
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
+    if (sending) return
 
     const found = {}
     REQUIRED.forEach((field) => {
@@ -63,10 +68,32 @@ export default function ContactForm() {
       return
     }
 
-    // No backend wired yet — see DESIGN_SYSTEM_3.md, form handling is a
-    // later task.
-    console.log('Contact form submission', values)
-    setSent(true)
+    setSending(true)
+    setSendError(null)
+
+    // The success state is only reached on a 2xx, so a message can never be
+    // reported as delivered when it wasn't.
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(values),
+      })
+      const payload = await res.json().catch(() => null)
+
+      if (!res.ok || !payload?.success) {
+        setSendError(
+          payload?.error || 'Something went wrong sending your message. Please try again.',
+        )
+        return
+      }
+
+      setSent(true)
+    } catch {
+      setSendError('We could not reach the server. Please check your connection and try again.')
+    } finally {
+      setSending(false)
+    }
   }
 
   const errorFor = (field) =>
@@ -220,11 +247,18 @@ export default function ContactForm() {
             {errorFor('message')}
           </div>
 
+          {sendError && (
+            <p role="alert" className="font-sans text-xs text-[#B85C5C]">
+              {sendError}
+            </p>
+          )}
+
           <button
             type="submit"
-            className="w-full rounded-full bg-primary py-3 font-sans text-sm font-medium text-white transition-colors duration-300 hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+            disabled={sending}
+            className="w-full rounded-full bg-primary py-3 font-sans text-sm font-medium text-white transition-colors duration-300 hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-60"
           >
-            Send Message
+            {sending ? 'Sending…' : 'Send Message'}
           </button>
         </motion.form>
       )}

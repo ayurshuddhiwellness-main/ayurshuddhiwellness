@@ -5,18 +5,26 @@
 // package is only loaded when a key is actually present.
 
 const FROM = process.env.RESEND_FROM || 'AyurShuddhi <bookings@ayurshuddhi.com>'
+// Where /contact enquiries land. Same address the page publishes to visitors.
+const CONTACT_TO = process.env.CONTACT_TO || 'ayurshuddhiwellness@gmail.com'
 const CLINIC_ADDRESS =
   process.env.CLINIC_ADDRESS ||
   'AyurShuddhi Wellness, 12 Green Leaf Lane, Pune, Maharashtra 411001'
 
-async function send({ to, subject, html }) {
+async function send({ to, subject, html, replyTo }) {
   if (!process.env.RESEND_API_KEY) {
     console.log(`[email:skipped] to=${to} subject="${subject}" (no RESEND_API_KEY)`)
     return { skipped: true }
   }
   const { Resend } = await import('resend')
   const resend = new Resend(process.env.RESEND_API_KEY)
-  const { data, error } = await resend.emails.send({ from: FROM, to, subject, html })
+  const { data, error } = await resend.emails.send({
+    from: FROM,
+    to,
+    subject,
+    html,
+    ...(replyTo ? { replyTo } : {}),
+  })
   if (error) {
     console.error('[email:error]', error)
     return { error }
@@ -60,6 +68,29 @@ export function sendBookingConfirmation({ to, serviceName, slotDatetime, note })
       <p style="color:#6B6B63;">We look forward to seeing you.</p>
     </div>`
   return send({ to, subject: 'Your AyurShuddhi appointment is confirmed', html })
+}
+
+// An enquiry from the /contact form, delivered to the clinic inbox. replyTo is
+// the visitor, so hitting reply in the inbox answers them directly — the From
+// stays on the verified sending domain, which is what Resend requires.
+export function sendContactEnquiry({ name, email, phone, subject, message }) {
+  const html = `
+    <div style="font-family:Inter,Arial,sans-serif;color:#1E2220;">
+      <h2 style="font-family:Georgia,serif;color:#3F5E50;">New enquiry from the website</h2>
+      <table style="margin:16px 0;">
+        <tr><td style="padding:4px 12px 4px 0;color:#6B6B63;">Name</td><td>${escapeHtml(name)}</td></tr>
+        <tr><td style="padding:4px 12px 4px 0;color:#6B6B63;">Email</td><td>${escapeHtml(email)}</td></tr>
+        ${phone ? `<tr><td style="padding:4px 12px 4px 0;color:#6B6B63;">Phone</td><td>${escapeHtml(phone)}</td></tr>` : ''}
+        <tr><td style="padding:4px 12px 4px 0;color:#6B6B63;">Subject</td><td>${escapeHtml(subject)}</td></tr>
+      </table>
+      <p style="white-space:pre-wrap;">${escapeHtml(message)}</p>
+    </div>`
+  return send({
+    to: CONTACT_TO,
+    subject: `[Contact] ${subject} — ${name}`,
+    html,
+    replyTo: email,
+  })
 }
 
 export function sendCancellation({ to, serviceName, slotDatetime }) {

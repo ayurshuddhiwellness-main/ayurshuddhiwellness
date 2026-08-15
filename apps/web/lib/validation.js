@@ -16,6 +16,12 @@ export function isValidPhone(phone) {
   return typeof phone === 'string' && /^\d{10}$/.test(phone.trim())
 }
 
+// Deliberately permissive — one @, something either side, a dot in the domain.
+// Anything stricter rejects valid addresses; delivery is the real test.
+export function isValidEmail(email) {
+  return typeof email === 'string' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())
+}
+
 // Document ids received from clients (service_id, booking_id) before they are
 // used in Firestore paths — blocks path separators and unbounded strings.
 export function isValidDocId(id) {
