@@ -50,15 +50,25 @@ const pillStill = {
 /* `id` is passed only by the homepage, which uses this as its About section and
    needs the "/#about" nav target. On /about the page hero already owns that id,
    so passing it here too would duplicate it. */
-export default function AboutPractitioner({ exploreLink = false, id }) {
+export default function AboutPractitioner({ exploreLink = false, id, snap = false }) {
   const reduce = useReducedMotion()
   const it = reduce ? itemStill : item
 
   return (
     <section
       id={id}
+      /* `snap` is passed by the homepage alone, which runs a gesture lock over
+         its sections. /about renders this same component in ordinary document
+         flow, so the stop and the viewport height have to be opt-in or that
+         page would inherit a sizing it has no lock to justify. */
+      data-snap-section={snap ? '' : undefined}
       /* scroll-mt-16 clears the 64px sticky navbar when arriving via /#about */
-      className="scroll-mt-16 overflow-x-hidden bg-card px-6 py-24 lg:px-12 lg:py-32"
+      className={[
+        'scroll-mt-16 overflow-x-hidden px-6 py-24 lg:px-12 lg:py-32',
+        snap && 'flex flex-col justify-center motion-safe:min-h-screen',
+      ]
+        .filter(Boolean)
+        .join(' ')}
     >
       <motion.div
         className="mx-auto grid max-w-content items-center gap-14 md:grid-cols-12 md:gap-16"
@@ -84,15 +94,21 @@ export default function AboutPractitioner({ exploreLink = false, id }) {
               }
             />
 
-            <div className="relative aspect-[3/4] overflow-hidden rounded-2xl border border-border bg-background">
-              {/* Source is landscape; the crop is pushed right so the subject
-                  stays in frame inside the portrait aperture. */}
+            <div className="relative aspect-square overflow-hidden rounded-2xl border border-border bg-background">
+              {/* The source is 3:2 landscape holding a two-person scene — the
+                  practitioner reading a pulse, the patient facing him. A 3:4
+                  portrait aperture threw away half that frame and left the
+                  patient as a disembodied arm at the edge, whichever way the
+                  crop was pushed. Square keeps ~67% of the width, which is
+                  enough for both faces, both hands and the notebook, so the
+                  photograph still reads as the consultation it is. Centred,
+                  because the composition is already balanced about its middle. */}
               <Image
                 src="/images/about/abhirath.JPG"
-                alt="Acharya Abbhiraath Singh writing consultation notes at his desk"
+                alt="Acharya Abbhiraath Singh reading a patient's pulse during a Nadi Pariksha consultation"
                 fill
                 sizes="(min-width: 768px) 40vw, 92vw"
-                className="object-cover object-[70%_center]"
+                className="object-cover object-center"
               />
 
               {/* Same retracting panel the story images use, so the two

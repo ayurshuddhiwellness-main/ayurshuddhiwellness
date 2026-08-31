@@ -17,42 +17,16 @@ import { useSyncExternalStore } from 'react'
 
 export const POP_MS = 1500
 
-// The sequence — splash, settle, travel to the nav bar — is a first-visit
-// welcome, so it plays once per browser and never again: reloads and later
-// visits open with the mark already parked. localStorage rather than
-// sessionStorage is what makes it survive the reload.
-const SEEN_KEY = 'as-intro-seen'
+/* The sequence plays on every fresh document load. It is deliberately NOT
+   persisted: a stored "already seen" flag spent the welcome on the first load
+   a browser ever made and then suppressed it forever after, which is
+   indistinguishable from the animation being broken.
 
-function introSeen() {
-  try {
-    return localStorage.getItem(SEEN_KEY) === '1'
-  } catch {
-    return false
-  }
-}
-
-function markIntroSeen() {
-  try {
-    localStorage.setItem(SEEN_KEY, '1')
-  } catch {
-    // Storage unavailable (privacy mode) — the splash simply replays.
-  }
-}
-
-/* Resolved at module evaluation, which on the client runs before anything
-   renders. The hook below can't carry this: React feeds the hydration render
-   the *server* snapshot ('intro'), so a returning visitor's markup still
-   arrives mid-splash and is corrected a beat later. Components read this
-   directly to make that correction instant instead of animated — without it
-   the mark would fly hero → nav bar on every single load, which is precisely
-   the once-only choreography. */
-const skipped = introSeen()
-
-export function introWasSkipped() {
-  return skipped
-}
-
-let phase = skipped ? 'navbar' : 'intro'
+   What must not replay is a client-side route change — /about and back is not
+   a fresh load. That falls out of this state living at module scope: it
+   survives navigation within a page instance and is only re-evaluated by a
+   real document load. */
+let phase = 'intro'
 let heroPresent = false
 let started = false
 let timers = []
@@ -69,42 +43,45 @@ function clear() {
   timers = []
 }
 
-// Routes without a Hero (/about, /services…) must not sit on an empty nav
-// slot indefinitely, so the sequence only arms itself if a Hero checked
-// in during this commit's effect pass — one frame is ample.
+/* Routes without a Hero (/about, /services…) must not sit on an empty nav slot
+   indefinitely, so the sequence only arms itself once a Hero has had the chance
+   to check in. Subscribing runs ahead of Hero's registering effect in the same
+   commit, so the decision is deferred to the end of that pass.
+
+   A timeout, not requestAnimationFrame: frames are not produced while the
+   document is hidden, so a page opened in a background tab (⌘-click, session
+   restore, a window opened behind another) never armed at all. Nothing was
+   pending to recover it either, so the visitor switched to the tab and found
+   the opaque splash covering the page for good. Timers still fire when hidden,
+   so the sequence now always runs to completion. */
 function start() {
   if (started) return
   started = true
 
-  // Already parked from the module-level resolution above — nothing to arm.
-  if (skipped) return
-
-  requestAnimationFrame(() => {
-    if (!heroPresent) {
-      set('navbar')
-      return
-    }
-    // Only the intro → hero leg is time-based.
-    // hero → navbar is scroll-driven (see advanceToNavbar).
-    timers.push(
-      setTimeout(() => {
-        markIntroSeen()
-        set('hero')
-      }, POP_MS),
-    )
-  })
+  timers.push(
+    setTimeout(() => {
+      if (!heroPresent) {
+        set('navbar')
+        return
+      }
+      // Only the intro → hero leg is time-based.
+      // hero → navbar is scroll-driven (see advanceToNavbar).
+      timers.push(setTimeout(() => set('hero'), POP_MS))
+    }, 0),
+  )
 }
 
 export function registerHero() {
   heroPresent = true
 }
 
-// Called by Hero.jsx when the user scrolls past the threshold. Scrolling away
-// mid-splash also counts as having seen the intro.
+/* Called by Hero.jsx when the user scrolls past the threshold. clear() is what
+   makes scrolling out during the splash safe: it cancels the arming timeout as
+   well as the settle, so nothing left over can fire afterwards and walk the
+   mark back out of the nav bar it has just flown into. */
 export function advanceToNavbar() {
   if (phase === 'navbar') return
   clear()
-  markIntroSeen()
   set('navbar')
 }
 
@@ -123,7 +100,8 @@ function subscribe(notify) {
 
 const getSnapshot = () => phase
 
-// The server has no timers, so it renders the first frame of the sequence.
+// The server has no timers, so it renders the first frame of the sequence —
+// which is also where the client starts, so hydration agrees by construction.
 const getServerSnapshot = () => 'intro'
 
 export function useIntroPhase() {

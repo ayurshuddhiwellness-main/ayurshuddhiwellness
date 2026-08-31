@@ -22,8 +22,19 @@ export default function RootedInTradition() {
   return (
     <section
       id="services"
-      /* scroll-mt-16 clears the 64px sticky navbar when arriving via /#services */
-      className="scroll-mt-16 border-t border-border bg-white px-6 py-24 lg:px-12"
+      data-snap-section
+      /* scroll-mt-16 clears the 64px sticky navbar when arriving via /#services.
+         motion-safe:min-h-screen is the snap sequence's doing, not the layout's:
+         it gives the section a full viewport to be stepped onto, and stays a
+         minimum so long content grows rather than being clipped. Under reduced
+         motion the lock is off, so the section sizes to its content as before.
+
+         No border-t. That hairline divided this white slab from the card-toned
+         one above it, back when each section painted its own ground. They are
+         all transparent over one shared photograph now, so there are no two
+         surfaces to separate and the border only drew a 1px linen line across
+         the picture. */
+      className="scroll-mt-16 flex flex-col justify-center px-6 py-24 motion-safe:min-h-screen lg:px-12"
     >
       <div className="mx-auto max-w-content">
         <RevealGroup className="mx-auto max-w-xl text-center">

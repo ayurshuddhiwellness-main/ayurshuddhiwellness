@@ -38,7 +38,11 @@ export const viewport = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${playfair.variable} ${inter.variable}`}>
-      <body className="bg-background text-foreground antialiased">
+      {/* No bg-* here on purpose. globals.css already puts the linen on <html>,
+          which propagates to the canvas — and an opaque body background paints
+          AFTER negative-z-index children, which would hide the homepage's fixed
+          backdrop entirely (see ui/PageBackdrop.jsx). */}
+      <body className="text-foreground antialiased">
         <MotionProvider>{children}</MotionProvider>
       </body>
     </html>

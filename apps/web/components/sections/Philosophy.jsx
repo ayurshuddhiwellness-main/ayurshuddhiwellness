@@ -49,8 +49,6 @@ const HINT_OUT = 0.08
 // The frame only pins where its content fits inside one clipped viewport.
 const PIN_FROM = '(min-width: 768px)'
 
-const BACKDROP = '/videos/generic_yoga_video.mp4'
-
 /* Entrances only, so quint-out throughout. 0.18s between the lines is wide by
    the standards of the rest of the site, but two lines of a spoken promise
    want the pause of a breath between them, not a stagger. */
@@ -80,32 +78,10 @@ const QUOTE = [
 
 export default function Philosophy() {
   const reduce = useReducedMotion()
-  const videoRef = useRef(null)
   const wrapperRef = useRef(null)
 
   const [pinned, setPinned] = useState(false)
   const [quoteShown, setQuoteShown] = useState(false)
-
-  // `muted` is a DOM property browsers and extensions rewrite independently of
-  // the attribute, so React's hydration check can disagree with the markup it
-  // shipped. Re-assert it as a property and drive playback from here, which
-  // also keeps the loop honest when the user prefers reduced motion.
-  useEffect(() => {
-    const el = videoRef.current
-    if (!el) return
-
-    el.muted = true
-
-    if (reduce) {
-      el.pause()
-      return
-    }
-
-    // Autoplay can still be refused (low power mode, data saver) — the section
-    // background stands in, so there is nothing to recover from.
-    const started = el.play()
-    if (started) started.catch(() => {})
-  }, [reduce])
 
   // Mirrors, in JS, the two conditions the className uses to pin: wide enough
   // for the content to fit a clipped viewport, and motion welcome. The two
@@ -165,35 +141,13 @@ export default function Philosophy() {
           and let the section below peer out from under the pin. */}
       <div
         data-media-backdrop
-        className="relative flex min-h-screen flex-col overflow-hidden bg-foreground px-6 py-24 shadow-[0_-20px_40px_-15px_rgba(0,0,0,0.08)] motion-safe:md:sticky motion-safe:md:top-0 motion-safe:md:h-screen motion-safe:md:min-h-0 lg:px-12"
+        className="relative flex min-h-screen flex-col overflow-hidden px-6 py-24 shadow-[0_-20px_40px_-15px_rgba(0,0,0,0.08)] motion-safe:md:sticky motion-safe:md:top-0 motion-safe:md:h-screen motion-safe:md:min-h-0 lg:px-12"
       >
-        {/* ── Backdrop — full-bleed loop, muted and inert ─────────────────── */}
-        <video
-          ref={videoRef}
-          aria-hidden="true"
-          tabIndex={-1}
-          autoPlay={!reduce}
-          loop
-          muted
-          playsInline
-          preload="metadata"
-          suppressHydrationWarning
-          src={BACKDROP}
-          className="pointer-events-none absolute inset-0 h-full w-full object-cover"
-        />
-
-        {/* ── Readability overlay ────────────────────────────────────────── */}
-        {/* Weighted into the top-left corner, where the heading sits */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 bg-gradient-to-br from-black/80 via-black/30 to-transparent"
-        />
-        {/* And across the foot — leaving the middle of the frame closest to
-            the photograph's own light */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent"
-        />
+        {/* No readability overlay. The hero's linen bed was tried here and read
+            as a pale blob across the middle of the photograph — it is built to
+            sit under the hero's DARK wordmark, and this section's copy is
+            white, so it washed the picture without helping the type. The frame
+            is left clear; the copy carries its own text-shadow. */}
 
         {/* ── Content ────────────────────────────────────────────────────── */}
         <div className="relative z-10 mx-auto flex w-full max-w-content flex-1 flex-col gap-16">

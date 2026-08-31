@@ -3,10 +3,10 @@
 import { useState, useCallback, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { motion } from 'framer-motion'
+import { motion, useReducedMotion } from 'framer-motion'
 import { useScrolled } from '../../hooks/useScrolled'
 import { useOverMedia } from '../../hooks/useOverMedia'
-import { introWasSkipped, useIntroPhase } from '../../hooks/useIntroSequence'
+import { useIntroPhase } from '../../hooks/useIntroSequence'
 import { useActiveSection } from '../../hooks/useActiveSection'
 import AnimatedLink from '../ui/AnimatedLink'
 import { EASE } from '../ui/motion'
@@ -32,6 +32,7 @@ const ROUTE_OWNERS = [
 ]
 
 export default function Navbar({ glass = false }) {
+  const reduce = useReducedMotion()
   const scrolled = useScrolled(10)
   const onMedia = useOverMedia()
   const introPhase = useIntroPhase()
@@ -102,9 +103,17 @@ export default function Navbar({ glass = false }) {
     main.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
 
-  // Settle to a solid linen bar once scrolled (or when the mobile menu is open),
-  // cross-fading background + border on the shared easing curve — like glass settling.
-  const solid = scrolled || menuOpen
+  /* Settle to a solid linen bar once scrolled (or when the mobile menu is open),
+     cross-fading background + border on the shared easing curve — like glass
+     settling.
+
+     The landing page is the exception: it runs one photograph behind every
+     section, and the bar is meant to stay the way it reads over the top of the
+     hero — transparent, with the picture running underneath it — for the whole
+     scroll rather than settling into a slab at the first tick. Scroll therefore
+     does not make it solid there. The mobile menu still does, on every route: a
+     drawer of links needs a real backing to sit on. */
+  const solid = onHome ? menuOpen : scrolled || menuOpen
 
   /* Over a full-bleed photo or video the solid bar competes with the footage,
      so there it thins to a frosted veil instead: no shadow, a hairline border,
@@ -152,13 +161,13 @@ export default function Navbar({ glass = false }) {
           aria-label="AyurshuddhiWellness — home"
           className="flex h-10 w-52 shrink-0 items-center"
         >
-          {/* The arriving half of the layoutId handoff drives the flight, so a
-              visitor who has already spent the intro needs it neutralised here
-              too — otherwise the mark still travels in from the hero on load. */}
+          {/* The arriving half of the layoutId handoff drives the flight. Under
+              reduced motion the mark is parked here from the start with no hero
+              leg behind it, so there is no flight to time. */}
           {introPhase === 'navbar' && (
             <motion.div
               layoutId="brand-wordmark"
-              transition={introWasSkipped() ? { duration: 0 } : { duration: 0.9, ease: EASE }}
+              transition={reduce ? { duration: 0 } : { duration: 0.9, ease: EASE }}
             >
               <span
                 aria-hidden="true"

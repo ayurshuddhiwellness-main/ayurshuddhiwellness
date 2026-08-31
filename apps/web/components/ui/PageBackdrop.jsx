@@ -1,0 +1,59 @@
+import Image from 'next/image'
+
+/* ──────────────────────────────────────────────────────────────────────────
+   The homepage's one backdrop, behind every section.
+
+   Fixed rather than scrolled: the sections travel over a photograph that stays
+   put, so the whole page reads as one frame rather than five stacked panels.
+   `-z-10` puts it under everything in the body's stacking context while still
+   painting over the root canvas colour, and nothing here is interactive or
+   announced — it is scenery.
+
+   NOTE: this only paints because <body> carries no background of its own. An
+   in-flow block's background paints AFTER negative-z-index children, so an
+   opaque body would hide this layer completely. globals.css puts the linen on
+   <html>, which propagates to the canvas and sits behind everything — see the
+   comment in app/layout.js before adding a bg-* there.
+
+   The path is verbatim, including the space in the directory name (encoded, so
+   the optimizer's URL survives it) and the uppercase extension. Both are
+   load-bearing: the file resolves case-insensitively on Windows but
+   byte-exactly on the Linux host, so a normalised name would 404 in production.
+
+   The scrim is a light-handed DARK one, and the direction matters: the
+   photograph is a bright golden-hour frame whose sky and sun flare blow out
+   along the top edge, so a linen wash would only push it further toward white.
+   Black deepens the greens and pulls the flare back into range instead.
+
+   It is weighted to the top and foot of the viewport and stays out of the
+   middle, where the frame is already well exposed — so the picture keeps its
+   openness and only its hot edges are held down. Deliberately mild; this is a
+   backdrop, not a treatment.
+
+   The sections carry no tint of their own over this. What other legibility
+   treatment exists is each section's own and predates this layer: Hero's
+   radial bed under the wordmark, and Philosophy's two corner-and-foot
+   gradients.
+   ────────────────────────────────────────────────────────────────────────── */
+
+const SRC = '/images/Landing%20Page/hero_background.PNG'
+
+const SCRIM =
+  'linear-gradient(to bottom, rgba(0,0,0,0.26) 0%, rgba(0,0,0,0.14) 45%, rgba(0,0,0,0.14) 55%, rgba(0,0,0,0.26) 100%)'
+
+export default function PageBackdrop() {
+  return (
+    <div aria-hidden="true" className="pointer-events-none fixed inset-0 -z-10">
+      <Image
+        src={SRC}
+        alt=""
+        fill
+        sizes="100vw"
+        // The backdrop for the whole page, so it leads the load.
+        priority
+        className="object-cover object-center"
+      />
+      <div className="absolute inset-0" style={{ background: SCRIM }} />
+    </div>
+  )
+}

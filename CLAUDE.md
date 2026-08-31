@@ -1,3 +1,11 @@
+## Git & Version Control
+
+**Never run `git commit`, `git push`, or any command that writes to git history or the remote repository.** This includes staging (`git add`), committing, pushing, force-pushing, creating/deleting branches, or merging.
+
+- You may run read-only git commands (`git status`, `git diff`, `git log`) to understand context.
+- All commits and pushes are done manually by the developer, who reviews changes first.
+- If a task seems to require a commit, stop and tell the user what changed and that it's ready for them to commit — do not commit it yourself.
+
 ## graphify
 
 This project has a knowledge graph at graphify-out/ with god nodes, community structure, and cross-file relationships.
@@ -30,6 +38,7 @@ Minimum code that solves the problem. Nothing speculative.
     If you write 200 lines and it could be 50, rewrite it.
 
 Ask yourself: "Would a senior engineer say this is overcomplicated?" If yes, simplify.
+
 3. Surgical Changes
 
 Touch only what you must. Clean up only your own mess.
@@ -47,6 +56,7 @@ When your changes create orphans:
     Don't remove pre-existing dead code unless asked.
 
 The test: Every changed line should trace directly to the user's request.
+
 4. Goal-Driven Execution
 
 Define success criteria. Loop until verified.
