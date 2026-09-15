@@ -38,8 +38,17 @@ import Image from 'next/image'
 
 const SRC = '/images/Landing%20Page/hero_background.PNG'
 
+/* A light black tint across the whole page, a little heavier at the top and
+   foot of the viewport where the photograph's sky and foreground shadow are
+   strongest. It exists to hold the picture down under the copy — the sections
+   with white type (Philosophy, the three services) read directly off it.
+
+   Note the direction of the trade: darkening helps light type and works
+   AGAINST the dark tokens. The sections still set in #1E2220 / #6B6B63 —
+   AboutPractitioner especially — do not gain from this, and their own local
+   beds are what carry them. */
 const SCRIM =
-  'linear-gradient(to bottom, rgba(0,0,0,0.26) 0%, rgba(0,0,0,0.14) 45%, rgba(0,0,0,0.14) 55%, rgba(0,0,0,0.26) 100%)'
+  'linear-gradient(to bottom, rgba(0,0,0,0.46) 0%, rgba(0,0,0,0.34) 45%, rgba(0,0,0,0.34) 55%, rgba(0,0,0,0.46) 100%)'
 
 export default function PageBackdrop() {
   return (

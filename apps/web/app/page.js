@@ -4,10 +4,7 @@ import Footer from '../components/layout/Footer'
 import SectionLock from '../components/ui/SectionLock'
 import PageBackdrop from '../components/ui/PageBackdrop'
 import Hero from '../components/sections/Hero'
-import ServiceSection, {
-  ServicesHeader,
-  ServicesCTA,
-} from '../components/sections/ServiceSection'
+import ServiceSection, { ServicesHeader, ServicesCTA } from '../components/sections/ServiceSection'
 import Journal from '../components/sections/Journal'
 
 // Below-fold client sections load as their own chunks so the initial
@@ -40,8 +37,11 @@ export default function HomePage() {
         <Philosophy />
 
         {/* 3 — Your Practitioner (shared with /about, which owns the full story).
-            Carries the "/#about" nav target on this page only. */}
-        <AboutPractitioner exploreLink snap id="about" />
+            Carries the "/#about" nav target on this page only. `onMedia` is
+            what tells the component it is sitting over the photograph above
+            rather than on linen: light type, its own graded scrim, and the
+            short version of the biography. */}
+        <AboutPractitioner exploreLink snap onMedia id="about" />
 
         {/* 4, 5, 6 — the three pillar services, one full screen each. Order is
             fixed: Ayurveda → Panchakarma → Yoga. The photograph alternates

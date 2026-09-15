@@ -56,7 +56,7 @@ export default function Navbar({ glass = false }) {
       e.preventDefault()
       window.scrollTo({ top: 0, behavior: 'smooth' })
     },
-    [onHome],
+    [onHome]
   )
 
   // Escape closes the mobile menu — expected of any open overlay.
@@ -90,7 +90,7 @@ export default function Navbar({ glass = false }) {
       // service's own root-level route.
       return label === 'Services' && pathname !== '/'
     },
-    [onHome, activeSection, pathname],
+    [onHome, activeSection, pathname]
   )
 
   // Sends keyboard users past the nav without needing an id on every <main>.
@@ -105,20 +105,27 @@ export default function Navbar({ glass = false }) {
 
   /* Settle to a solid linen bar once scrolled (or when the mobile menu is open),
      cross-fading background + border on the shared easing curve — like glass
-     settling.
-
-     The landing page is the exception: it runs one photograph behind every
-     section, and the bar is meant to stay the way it reads over the top of the
-     hero — transparent, with the picture running underneath it — for the whole
-     scroll rather than settling into a slab at the first tick. Scroll therefore
-     does not make it solid there. The mobile menu still does, on every route: a
-     drawer of links needs a real backing to sit on. */
-  const solid = onHome ? menuOpen : scrolled || menuOpen
+     settling. The mobile menu makes it solid on every route: a drawer of links
+     needs a real backing to sit on. */
+  /* The homepage is the exception to "once scrolled": the splash covers the bar
+     outright while it plays, so the first moment the bar is ever SEEN there is
+     already over the photograph — waiting for a scroll left the nav set in the
+     dark tokens on a bright sky until the reader moved. It takes the veil as
+     soon as the splash lifts instead. */
+  const solid = (onHome ? introPhase !== 'intro' : scrolled) || menuOpen
 
   /* Over a full-bleed photo or video the solid bar competes with the footage,
      so there it thins to a frosted veil instead: no shadow, a hairline border,
      and just enough tint behind the type to keep it legible. The mobile menu is
      excluded — a drawer of links needs a real backing to sit on.
+
+     The landing page takes the veil for its whole scroll rather than only over
+     the sections that opt in with `data-media-backdrop`: it runs ONE fixed
+     photograph behind every section, so there is nowhere on it the bar is not
+     over footage. It used to stay fully transparent there for the entire page,
+     which left the nav set in the dark tokens over a darkened photograph and
+     effectively invisible. The very top is still untouched — `solid` is false
+     until the first tick of scroll, so the hero opens on a clean frame.
 
      The tint is a deep pine rather than the linen background token: it holds
      the footage down instead of washing it out, and it is the same family as
@@ -126,7 +133,7 @@ export default function Navbar({ glass = false }) {
      color-mix either way — the theme colours are bare var() values with no
      <alpha-value>, so `bg-background/55` would silently compile to a fully
      opaque bar (same trap documented in Hero.jsx). */
-  const veiled = solid && onMedia && !menuOpen
+  const veiled = solid && (onHome || onMedia) && !menuOpen
 
   // Both the veil and the `glass` routes put the bar over something dark, so
   // the type, the mark and the outlined button all invert together.
@@ -185,9 +192,7 @@ export default function Navbar({ glass = false }) {
                      are bare var() values with no <alpha-value>, so the alpha
                      modifier silently drops the whole declaration and the word
                      fell back to the inherited dark foreground. */
-                  className={`font-normal italic ${
-                    onDark ? 'text-white/80' : 'text-primary'
-                  }`}
+                  className={`font-normal italic ${onDark ? 'text-white/80' : 'text-primary'}`}
                 >
                   Wellness
                 </span>
@@ -199,7 +204,7 @@ export default function Navbar({ glass = false }) {
         {/* Center nav — desktop. Each link is a pill that lifts out of the bar
             on hover and presses back in on click; the current one stays held in
             sage so your position is always readable. */}
-        <nav className="hidden items-center gap-1 md:flex">
+        <nav className="hidden items-center gap-1 lg:flex">
           {navLinks.map((link) => {
             const active = isActive(link.label)
 
@@ -214,7 +219,9 @@ export default function Navbar({ glass = false }) {
                    read. color-mix rather than bg-primary/15, because the theme
                    colours are bare var() values and the /alpha syntax compiles
                    to nothing against them. */
-                className={`rounded-full px-4 py-2 font-sans text-sm uppercase tracking-widest transition-[color,background-color,transform,box-shadow] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 hover:shadow-soft active:translate-y-0 active:scale-[0.97] motion-reduce:transition-colors motion-reduce:hover:translate-y-0 motion-reduce:active:scale-100 ${
+                className={`rounded-full px-4 py-2 font-sans text-sm uppercase tracking-widest transition-[color,background-color,transform,box-shadow] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 hover:shadow-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent active:translate-y-0 active:scale-[0.97] motion-reduce:transition-colors motion-reduce:hover:translate-y-0 motion-reduce:active:scale-100 ${
+                  onDark ? 'focus-visible:ring-white' : 'focus-visible:ring-primary'
+                } ${
                   onDark
                     ? active
                       ? 'bg-white/25 font-medium text-white'
@@ -234,22 +241,31 @@ export default function Navbar({ glass = false }) {
         </nav>
 
         {/* Right — auth + CTA (desktop) */}
-        <div className="hidden items-center gap-3 md:flex">
+        <div className="hidden items-center gap-3 lg:flex">
+          {/* Secondary: an outline and nothing else, so the filled button
+              beside it is unambiguously the thing to press. */}
           <Link
             href="/login"
-            className={`rounded-full border px-5 py-2 font-sans text-sm font-medium transition-[color,background-color,border-color,transform,box-shadow] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 hover:shadow-soft active:translate-y-0 active:scale-[0.97] motion-reduce:transition-colors motion-reduce:hover:translate-y-0 motion-reduce:active:scale-100 ${
+            className={`rounded-full border px-5 py-2 font-sans text-sm font-medium transition-[color,background-color,border-color,transform,box-shadow] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-0.5 hover:shadow-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent active:translate-y-0 active:scale-[0.97] motion-reduce:transition-colors motion-reduce:hover:translate-y-0 motion-reduce:active:scale-100 ${
               onDark
-                ? 'border-white/30 text-white hover:bg-white/15'
-                : 'border-border text-foreground hover:border-primary hover:text-primary'
+                ? 'border-white/35 text-white hover:border-white/60 hover:bg-white/15 focus-visible:ring-white'
+                : 'border-border text-foreground hover:border-primary hover:text-primary focus-visible:ring-primary'
             }`}
           >
             Login
           </Link>
-          {/* Left deliberately flat — the primary CTA does not need to compete
-              with the links now lifting around it. */}
+          {/* Primary: the only filled element in the bar. Left deliberately
+              flat — it does not need to compete with the links lifting around
+              it. Over the veil it takes a hairline ring and a cast shadow, so
+              its sage edge stays legible against the pine tint behind it
+              rather than dissolving into another dark green. */}
           <AnimatedLink
             href="/book"
-            className="rounded-full bg-primary px-6 py-2.5 font-sans text-sm font-medium text-white transition-colors duration-300 hover:bg-primary-hover md:inline-flex md:items-center"
+            className={`rounded-full bg-primary px-6 py-2.5 font-sans text-sm font-medium text-white transition-colors duration-300 hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent lg:inline-flex lg:items-center ${
+              onDark
+                ? 'shadow-[0_8px_20px_-8px_rgba(0,0,0,0.65)] ring-1 ring-white/25 focus-visible:ring-white'
+                : 'focus-visible:ring-primary'
+            }`}
           >
             Book Now
           </AnimatedLink>
@@ -258,7 +274,7 @@ export default function Navbar({ glass = false }) {
         {/* Hamburger — mobile */}
         <button
           onClick={() => setMenuOpen(!menuOpen)}
-          className="flex h-10 w-10 items-center justify-center md:hidden"
+          className="flex h-10 w-10 items-center justify-center lg:hidden"
           aria-label="Toggle menu"
         >
           <svg
@@ -289,7 +305,7 @@ export default function Navbar({ glass = false }) {
 
       {/* Mobile dropdown */}
       {menuOpen && (
-        <div className="border-t border-border bg-background px-6 pb-6 pt-4 md:hidden">
+        <div className="border-t border-border bg-background px-6 pb-6 pt-4 lg:hidden">
           <nav className="flex flex-col gap-1">
             {navLinks.map((link) => {
               const active = isActive(link.label)
@@ -317,14 +333,16 @@ export default function Navbar({ glass = false }) {
               <Link
                 href="/login"
                 onClick={() => setMenuOpen(false)}
-                className="inline-flex justify-center rounded-full border border-border px-6 py-2.5 font-sans text-sm font-medium text-foreground transition-colors duration-300 hover:border-primary hover:text-primary"
+                /* min-h-[44px] to match Book Now below it — both are thumb
+                   targets in a drawer, and only one of them had the height. */
+                className="inline-flex min-h-[44px] items-center justify-center rounded-full border border-border px-6 py-2.5 font-sans text-sm font-medium text-foreground transition-colors duration-300 hover:border-primary hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
               >
                 Login
               </Link>
               <AnimatedLink
                 href="/book"
                 onClick={() => setMenuOpen(false)}
-                className="inline-flex min-h-[44px] items-center justify-center rounded-full bg-primary px-6 py-2.5 font-sans text-sm font-medium text-white transition-colors duration-300 hover:bg-primary-hover"
+                className="inline-flex min-h-[44px] items-center justify-center rounded-full bg-primary px-6 py-2.5 font-sans text-sm font-medium text-white transition-colors duration-300 hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
               >
                 Book Now
               </AnimatedLink>
