@@ -8,6 +8,7 @@
 // (`npm install razorpay`) and uncomment / add the real implementation.
 
 import crypto from 'crypto'
+import { fail } from './api-response.js'
 
 // Dummy mode is only ever active outside production, or when explicitly
 // opted into via PAYMENTS_DUMMY_MODE=true. In production without that flag,
@@ -49,7 +50,21 @@ export function verifyPayment({ orderId, paymentId, signature }) {
   if (isDummyMode()) {
     return signature === `dummy_signature_${orderId}`
   }
-  const expected = computeSignature(orderId, paymentId, process.env.RAZORPAY_KEY_SECRET)
+
+  /* A missing secret is a deployment fault, not a bad signature, and the two
+     must not look alike. Returning false here would blame the customer's
+     payment; letting createHmac() run on `undefined` threw, which guard()
+     turned into an opaque 500. Both fail closed — neither is diagnosable.
+
+     Thrown rather than returned because this is the house pattern for a
+     non-negotiable refusal: guard() returns a thrown Response verbatim, the
+     same way enforceRateLimit and requireAuth signal theirs. */
+  const secret = process.env.RAZORPAY_KEY_SECRET
+  if (!secret) {
+    throw fail(503, 'Payments are not configured — please contact us to confirm your booking')
+  }
+
+  const expected = computeSignature(orderId, paymentId, secret)
   const ba = Buffer.from(String(expected))
   const bb = Buffer.from(String(signature))
   if (ba.length !== bb.length) return false

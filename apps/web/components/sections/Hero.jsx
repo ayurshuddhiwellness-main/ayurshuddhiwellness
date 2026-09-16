@@ -90,10 +90,7 @@ export default function Hero() {
   // framer-motion drives layout animations with scale itself and the two fight
   // if combined — the nav bar leg is what layoutId is carrying.
   const mark = (
-    <motion.div
-      layoutId="brand-wordmark"
-      transition={reduce ? { duration: 0 } : TRAVEL}
-    >
+    <motion.div layoutId="brand-wordmark" transition={reduce ? { duration: 0 } : TRAVEL}>
       <motion.div
         initial={false}
         animate={{ scale: phase === 'intro' ? SPLASH_SCALE : 1 }}
@@ -147,7 +144,6 @@ export default function Hero() {
           100vh means the hero owns the screen outright and the next section
           only exists once you have scrolled for it. */}
       <section
-        data-media-backdrop
         data-snap-section
         className="relative flex h-screen flex-col items-center justify-center overflow-hidden px-6 py-24 text-center lg:px-12"
       >

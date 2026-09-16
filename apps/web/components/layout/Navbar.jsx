@@ -1,11 +1,9 @@
 'use client'
 
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { motion, useReducedMotion } from 'framer-motion'
-import { useScrolled } from '../../hooks/useScrolled'
-import { useOverMedia } from '../../hooks/useOverMedia'
 import { useIntroPhase } from '../../hooks/useIntroSequence'
 import { useActiveSection } from '../../hooks/useActiveSection'
 import AnimatedLink from '../ui/AnimatedLink'
@@ -33,10 +31,9 @@ const ROUTE_OWNERS = [
 
 export default function Navbar({ glass = false }) {
   const reduce = useReducedMotion()
-  const scrolled = useScrolled(10)
-  const onMedia = useOverMedia()
   const introPhase = useIntroPhase()
   const [menuOpen, setMenuOpen] = useState(false)
+  const toggleRef = useRef(null)
   const pathname = usePathname()
   const onHome = pathname === '/'
   const activeSection = useActiveSection(SECTION_IDS, onHome)
@@ -59,11 +56,16 @@ export default function Navbar({ glass = false }) {
     [onHome]
   )
 
-  // Escape closes the mobile menu — expected of any open overlay.
+  // Escape closes the mobile menu — expected of any open overlay. Focus goes
+  // back to the toggle that opened it; otherwise closing the drawer strands
+  // focus on a removed element and keyboard users land back at the document.
   useEffect(() => {
     if (!menuOpen) return
     const onKeyDown = (e) => {
-      if (e.key === 'Escape') setMenuOpen(false)
+      if (e.key === 'Escape') {
+        setMenuOpen(false)
+        toggleRef.current?.focus()
+      }
     }
     window.addEventListener('keydown', onKeyDown)
     return () => window.removeEventListener('keydown', onKeyDown)
@@ -103,29 +105,21 @@ export default function Navbar({ glass = false }) {
     main.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
 
-  /* Settle to a solid linen bar once scrolled (or when the mobile menu is open),
-     cross-fading background + border on the shared easing curve — like glass
-     settling. The mobile menu makes it solid on every route: a drawer of links
-     needs a real backing to sit on. */
-  /* The homepage is the exception to "once scrolled": the splash covers the bar
-     outright while it plays, so the first moment the bar is ever SEEN there is
-     already over the photograph — waiting for a scroll left the nav set in the
-     dark tokens on a bright sky until the reader moved. It takes the veil as
-     soon as the splash lifts instead. */
-  const solid = (onHome ? introPhase !== 'intro' : scrolled) || menuOpen
+  /* SiteShell now puts the same photograph behind EVERY route, so there is no
+     longer anywhere the bar sits over a plain linen page. It is therefore
+     veiled from the first pixel everywhere rather than waiting for a scroll —
+     which is what "once scrolled" was for, back when the rest of the site was
+     linen and an unscrolled bar had nothing to compete with.
+
+     The homepage keeps its one exception: the splash covers the bar outright
+     while it plays, so the first moment the bar is ever SEEN there is already
+     over the photograph. It takes the veil as soon as the splash lifts. */
+  const solid = (onHome ? introPhase !== 'intro' : true) || menuOpen
 
   /* Over a full-bleed photo or video the solid bar competes with the footage,
      so there it thins to a frosted veil instead: no shadow, a hairline border,
      and just enough tint behind the type to keep it legible. The mobile menu is
      excluded — a drawer of links needs a real backing to sit on.
-
-     The landing page takes the veil for its whole scroll rather than only over
-     the sections that opt in with `data-media-backdrop`: it runs ONE fixed
-     photograph behind every section, so there is nowhere on it the bar is not
-     over footage. It used to stay fully transparent there for the entire page,
-     which left the nav set in the dark tokens over a darkened photograph and
-     effectively invisible. The very top is still untouched — `solid` is false
-     until the first tick of scroll, so the hero opens on a clean frame.
 
      The tint is a deep pine rather than the linen background token: it holds
      the footage down instead of washing it out, and it is the same family as
@@ -133,7 +127,7 @@ export default function Navbar({ glass = false }) {
      color-mix either way — the theme colours are bare var() values with no
      <alpha-value>, so `bg-background/55` would silently compile to a fully
      opaque bar (same trap documented in Hero.jsx). */
-  const veiled = solid && (onHome || onMedia) && !menuOpen
+  const veiled = solid && !menuOpen
 
   // Both the veil and the `glass` routes put the bar over something dark, so
   // the type, the mark and the outlined button all invert together.
@@ -272,10 +266,17 @@ export default function Navbar({ glass = false }) {
         </div>
 
         {/* Hamburger — mobile */}
+        {/* aria-expanded/aria-controls are what tell a screen reader the menu
+            opened at all — the label alone described the control but never its
+            state. The ref is so Escape can hand focus back here rather than
+            dropping it on a drawer that no longer exists. */}
         <button
+          ref={toggleRef}
           onClick={() => setMenuOpen(!menuOpen)}
           className="flex h-10 w-10 items-center justify-center lg:hidden"
           aria-label="Toggle menu"
+          aria-expanded={menuOpen}
+          aria-controls="mobile-menu"
         >
           <svg
             width="24"
@@ -305,7 +306,7 @@ export default function Navbar({ glass = false }) {
 
       {/* Mobile dropdown */}
       {menuOpen && (
-        <div className="border-t border-border bg-background px-6 pb-6 pt-4 lg:hidden">
+        <div id="mobile-menu" className="border-t border-border bg-background px-6 pb-6 pt-4 lg:hidden">
           <nav className="flex flex-col gap-1">
             {navLinks.map((link) => {
               const active = isActive(link.label)

@@ -1,5 +1,4 @@
-import Navbar from '../../components/layout/Navbar'
-import Footer from '../../components/layout/Footer'
+import SiteShell from '../../components/layout/SiteShell'
 import ProfileHeader from '../../components/sections/ProfileHeader'
 import ProfileInfo from '../../components/sections/ProfileInfo'
 import ProfilePrakriti from '../../components/sections/ProfilePrakriti'
@@ -19,16 +18,12 @@ export const metadata = {
 
 export default function ProfilePage() {
   return (
-    <>
-      <Navbar />
-      <main>
-        <ProfileHeader />
-        <ProfileInfo />
-        <ProfilePrakriti />
-        <ProfileBookings />
-        <CTABanner />
-      </main>
-      <Footer />
-    </>
+    <SiteShell>
+      <ProfileHeader />
+      <ProfileInfo />
+      <ProfilePrakriti />
+      <ProfileBookings />
+      <CTABanner />
+    </SiteShell>
   )
 }

@@ -7,6 +7,7 @@ import { requireAuth } from '../../../../lib/auth-middleware'
 import { ok, fail, guard } from '../../../../lib/api-response'
 import { sendCancellation } from '../../../../lib/email'
 import { isValidDocId } from '../../../../lib/validation'
+import { clinicSlotToMs } from '../../../../lib/clinic-time'
 
 const TWENTY_FOUR_HOURS_MS = 24 * 60 * 60 * 1000
 
@@ -27,8 +28,12 @@ export async function DELETE(request, { params }) {
       return fail(400, 'Only confirmed bookings can be cancelled')
     }
 
-    // slot_datetime is clinic-local naive ISO; parse as local time.
-    const slotMs = new Date(booking.slot_datetime).getTime()
+    /* slot_datetime is clinic-local naive ISO, so it MUST be resolved against
+       the clinic's zone rather than the server's. Parsing it with a bare
+       `new Date()` put the appointment 5.5 hours later than it really is on a
+       UTC host, which let a booking 19.5 real hours away pass this 24-hour
+       guard. See lib/clinic-time.js. */
+    const slotMs = clinicSlotToMs(booking.slot_datetime)
     if (!Number.isFinite(slotMs)) return fail(400, 'Booking has an invalid slot time')
     if (slotMs - Date.now() <= TWENTY_FOUR_HOURS_MS) {
       return fail(400, 'Bookings can only be cancelled more than 24 hours in advance')

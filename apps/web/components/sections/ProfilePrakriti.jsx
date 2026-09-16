@@ -2,6 +2,7 @@
 
 import { motion, useReducedMotion } from 'framer-motion'
 import { RevealGroup, RevealItem } from '../ui/Reveal'
+import { PANEL_CREAM, PANEL_CREAM_BG } from '../ui/surfaces'
 import AnimatedLink from '../ui/AnimatedLink'
 import { EASE } from '../ui/motion'
 import { PRAKRITI } from '../../lib/profile-mock'
@@ -16,9 +17,7 @@ function DoshaBar({ dosha, index, reduce }) {
     <div>
       <div className="flex items-baseline justify-between">
         <span className="font-sans text-sm text-foreground">{dosha.name}</span>
-        <span className="font-sans text-sm tabular-nums text-muted">
-          {dosha.value}%
-        </span>
+        <span className="font-sans text-sm tabular-nums text-muted">{dosha.value}%</span>
       </div>
 
       <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-border">
@@ -28,9 +27,7 @@ function DoshaBar({ dosha, index, reduce }) {
           whileInView={{ scaleX: dosha.value / 100 }}
           viewport={{ once: true, margin: '-80px' }}
           transition={
-            reduce
-              ? { duration: 0 }
-              : { duration: 1.1, ease: EASE, delay: 0.15 + index * 0.12 }
+            reduce ? { duration: 0 } : { duration: 1.1, ease: EASE, delay: 0.15 + index * 0.12 }
           }
         />
       </div>
@@ -42,10 +39,10 @@ export default function ProfilePrakriti() {
   const reduce = useReducedMotion()
 
   return (
-    <section className="bg-background px-6 pb-16 lg:px-12">
+    <section className="relative px-6 pb-16 lg:px-12">
       <RevealGroup className="mx-auto max-w-content">
         <RevealItem>
-          <div className="rounded-2xl border border-border bg-card p-8 md:p-10">
+          <div style={{ background: PANEL_CREAM_BG }} className={`${PANEL_CREAM} p-8 md:p-10`}>
             <p className="font-sans text-xs uppercase tracking-[0.25em] text-primary">
               Your Prakriti
             </p>
@@ -64,12 +61,7 @@ export default function ProfilePrakriti() {
 
                   <div className="flex flex-col justify-center gap-6">
                     {PRAKRITI.doshas.map((dosha, i) => (
-                      <DoshaBar
-                        key={dosha.name}
-                        dosha={dosha}
-                        index={i}
-                        reduce={reduce}
-                      />
+                      <DoshaBar key={dosha.name} dosha={dosha} index={i} reduce={reduce} />
                     ))}
                   </div>
                 </div>
@@ -90,9 +82,8 @@ export default function ProfilePrakriti() {
                   Discover your Prakriti
                 </h2>
                 <p className="mt-4 font-sans text-base leading-relaxed text-muted">
-                  Your constitution shapes everything we would recommend — what
-                  to eat, when to rest, which therapies suit you. It takes a few
-                  minutes to establish.
+                  Your constitution shapes everything we would recommend — what to eat, when to
+                  rest, which therapies suit you. It takes a few minutes to establish.
                 </p>
                 <AnimatedLink
                   href="/book"

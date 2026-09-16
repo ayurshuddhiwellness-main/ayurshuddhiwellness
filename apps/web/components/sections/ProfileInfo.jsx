@@ -1,6 +1,7 @@
 'use client'
 
 import { RevealGroup, RevealItem } from '../ui/Reveal'
+import { PANEL_CREAM, PANEL_CREAM_BG } from '../ui/surfaces'
 import AnimatedLink from '../ui/AnimatedLink'
 import { PROFILE } from '../../lib/profile-mock'
 
@@ -14,10 +15,10 @@ const FIELDS = [
 
 export default function ProfileInfo() {
   return (
-    <section className="bg-background px-6 pb-16 lg:px-12">
+    <section className="relative px-6 pb-16 lg:px-12">
       <RevealGroup className="mx-auto max-w-content">
         <RevealItem>
-          <div className="rounded-2xl border border-border bg-card p-8 md:p-10">
+          <div style={{ background: PANEL_CREAM_BG }} className={`${PANEL_CREAM} p-8 md:p-10`}>
             <div className="flex flex-wrap items-center justify-between gap-4">
               <h2 className="font-serif text-2xl font-normal text-foreground">
                 Personal Information
@@ -37,9 +38,7 @@ export default function ProfileInfo() {
                   <dt className="font-sans text-xs uppercase tracking-[0.25em] text-muted">
                     {field.label}
                   </dt>
-                  <dd className="mt-2 font-sans text-base text-foreground">
-                    {field.value}
-                  </dd>
+                  <dd className="mt-2 font-sans text-base text-foreground">{field.value}</dd>
                 </div>
               ))}
             </dl>

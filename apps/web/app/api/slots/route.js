@@ -7,7 +7,7 @@
 
 import { getDb } from '../../../lib/firebase-admin'
 import { ok, fail, guard } from '../../../lib/api-response'
-import { computeAvailableSlots } from '../../../lib/slots'
+import { holdingBookingsQuery, openStartTimes, toHold } from '../../../lib/availability'
 import { isValidDocId } from '../../../lib/validation'
 import { enforceRateLimit } from '../../../lib/rate-limit'
 
@@ -43,26 +43,12 @@ export async function GET(request) {
 
     const avail = availSnap.docs[0].data()
 
-    // Confirmed bookings for this service; filter to this date in memory and
-    // derive their "HH:MM" start times.
-    const bookingsSnap = await db
-      .collection('bookings')
-      .where('service_id', '==', serviceId)
-      .where('status', '==', 'confirmed')
-      .get()
+    /* Confirmed AND held-pending bookings, through the same helper POST
+       /api/bookings enforces with. When this counted only confirmed bookings
+       it advertised slots that someone was already paying for. */
+    const holdsSnap = await holdingBookingsQuery(db, serviceId).get()
 
-    const bookedSlots = bookingsSnap.docs
-      .map((d) => d.data().slot_datetime || '')
-      .filter((dt) => dt.slice(0, 10) === date)
-      .map((dt) => dt.slice(11, 16))
-
-    const available = computeAvailableSlots({
-      startTime: avail.start_time,
-      endTime: avail.end_time,
-      slotDurationMinutes: avail.slot_duration_minutes,
-      blockedSlots: avail.blocked_slots || [],
-      bookedSlots,
-    })
+    const available = openStartTimes(avail, holdsSnap.docs.map(toHold), date)
 
     return ok({ date, service_id: serviceId, available_slots: available }, { headers: CACHE })
   })

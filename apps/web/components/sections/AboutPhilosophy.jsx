@@ -2,6 +2,8 @@
 
 import { motion, useReducedMotion } from 'framer-motion'
 import { RevealGroup, RevealItem } from '../ui/Reveal'
+import SectionScrim from '../ui/SectionScrim'
+import { EYEBROW, HEADING, BODY, PANEL_SOFT, PANEL_SOFT_BG } from '../ui/surfaces'
 import { EASE } from '../ui/motion'
 import MaskReveal from '../ui/MaskReveal'
 
@@ -48,7 +50,7 @@ function Mark({ shapes, reduce }) {
     <svg
       aria-hidden="true"
       viewBox="0 0 24 24"
-      className="h-9 w-9 text-primary"
+      className="h-9 w-9 text-white/80"
       fill="none"
       stroke="currentColor"
       strokeWidth={1.25}
@@ -69,21 +71,18 @@ const PRINCIPLES = [
     title: 'The Root Cause',
     body: 'Every disease has a reason. We find it before we treat it.',
     shapes: ROOT,
-    surface: 'bg-card',
   },
   {
     numeral: '02',
     title: 'We Listen to Your Body',
     body: 'Symptoms are the body’s last resort.',
     shapes: PULSE,
-    surface: 'bg-background',
   },
   {
     numeral: '03',
     title: 'A Personalised Treatment Plan',
     body: 'There is no ‘one-size-fits-all’ in wellness.',
     shapes: PRAKRITI,
-    surface: 'bg-card',
   },
 ]
 
@@ -98,15 +97,15 @@ export default function AboutPhilosophy() {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.15 }}
       transition={reduce ? { duration: 0 } : { duration: 0.8, ease: EASE }}
-      className="relative z-10 overflow-x-hidden rounded-t-[2.5rem] bg-background px-6 py-24 shadow-[0_-20px_40px_-15px_rgba(0,0,0,0.08)] lg:px-12 lg:py-32"
+      className="relative z-10 overflow-x-hidden px-6 py-24 lg:px-12 lg:py-32"
     >
+      <SectionScrim focus="center" />
+
       <RevealGroup className="mx-auto max-w-xl text-center">
         <RevealItem>
-          <p className="mb-4 font-sans text-sm uppercase tracking-[0.25em] text-primary">
-            What We Believe
-          </p>
+          <p className={`mb-4 ${EYEBROW}`}>What We Believe</p>
         </RevealItem>
-        <h2 className="font-serif text-4xl font-normal leading-tight text-foreground md:text-5xl">
+        <h2 className={`${HEADING} text-4xl md:text-5xl`}>
           <MaskReveal reduce={reduce}>Our Philosophy</MaskReveal>
         </h2>
       </RevealGroup>
@@ -120,7 +119,8 @@ export default function AboutPhilosophy() {
             className={i === 1 ? 'md:mt-12' : undefined}
           >
             <article
-              className={`group relative h-full overflow-hidden rounded-2xl border border-border ${p.surface} p-8 transition-[transform,border-color,box-shadow] duration-300 ease-out hover:-translate-y-1 hover:border-primary/40 hover:shadow-soft motion-reduce:transition-none motion-reduce:hover:translate-y-0`}
+              style={{ background: PANEL_SOFT_BG }}
+              className={`group relative h-full overflow-hidden ${PANEL_SOFT} p-8 transition-[transform,border-color,box-shadow] duration-300 ease-out hover:-translate-y-1 hover:border-white/35 motion-reduce:transition-none motion-reduce:hover:translate-y-0`}
             >
               {/* Ghost numeral — decorative, settles in behind the content */}
               <motion.span
@@ -128,12 +128,8 @@ export default function AboutPhilosophy() {
                 initial={{ opacity: 0, scale: 0.92 }}
                 whileInView={{ opacity: 0.07, scale: 1 }}
                 viewport={{ once: true, margin: '-80px' }}
-                transition={
-                  reduce
-                    ? { duration: 0 }
-                    : { duration: 1.1, ease: EASE, delay: 0.15 }
-                }
-                className="pointer-events-none absolute -right-2 -top-6 select-none font-serif text-[7rem] leading-none text-primary"
+                transition={reduce ? { duration: 0 } : { duration: 1.1, ease: EASE, delay: 0.15 }}
+                className="pointer-events-none absolute -right-2 -top-6 select-none font-serif text-[7rem] leading-none text-white"
               >
                 {p.numeral}
               </motion.span>
@@ -141,19 +137,17 @@ export default function AboutPhilosophy() {
               <div className="relative">
                 <Mark shapes={p.shapes} reduce={reduce} />
 
-                <p className="mt-6 font-sans text-xs uppercase tracking-[0.25em] text-primary">
+                <p className="mt-6 font-sans text-xs uppercase tracking-[0.25em] text-white/75">
                   {p.numeral}
                 </p>
 
-                <h3 className="mt-3 font-serif text-2xl font-normal leading-snug text-foreground">
+                <h3 className={`mt-3 ${HEADING} text-2xl`}>
                   <MaskReveal reduce={reduce} duration={0.8} delay={0.1}>
                     {p.title}
                   </MaskReveal>
                 </h3>
 
-                <p className="mt-3 font-sans text-base leading-relaxed text-muted">
-                  {p.body}
-                </p>
+                <p className={`mt-3 ${BODY} text-base`}>{p.body}</p>
               </div>
             </article>
           </RevealItem>

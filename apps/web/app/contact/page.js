@@ -1,10 +1,11 @@
-import Navbar from '../../components/layout/Navbar'
-import Footer from '../../components/layout/Footer'
+import SiteShell from '../../components/layout/SiteShell'
 import CTABanner from '../../components/sections/CTABanner'
 import ContactForm from '../../components/sections/ContactForm'
 import ContactInfo from '../../components/sections/ContactInfo'
 import ContactTrust from '../../components/sections/ContactTrust'
 import { RevealGroup, RevealItem } from '../../components/ui/Reveal'
+import SectionScrim from '../../components/ui/SectionScrim'
+import { EYEBROW, HEADING, BODY } from '../../components/ui/surfaces'
 
 export const metadata = {
   title: 'Contact Us | AyurshuddhiWellness',
@@ -14,43 +15,43 @@ export const metadata = {
 
 export default function ContactPage() {
   return (
-    <>
-      <Navbar />
-      <main>
+    <SiteShell>
+      <>
         {/* ── Hero ─────────────────────────────────────────────────────── */}
-        <section className="bg-background px-6 py-24 text-center lg:px-12 md:py-32">
-          <RevealGroup className="mx-auto max-w-content">
+        <section className="relative px-6 py-24 text-center md:py-32 lg:px-12">
+          <SectionScrim focus="center" />
+
+          <RevealGroup className="relative z-10 mx-auto max-w-content">
             <RevealItem>
-              <p className="mb-6 font-sans text-sm uppercase tracking-[0.25em] text-primary">
-                Get in Touch
-              </p>
+              <p className={`mb-6 ${EYEBROW}`}>Get in Touch</p>
             </RevealItem>
 
             <RevealItem>
-              <h1 className="mx-auto max-w-3xl font-serif text-5xl font-normal leading-[1.1] text-foreground md:text-6xl">
+              <h1
+                className={`mx-auto max-w-3xl ${HEADING} text-4xl leading-[1.1] sm:text-5xl md:text-6xl`}
+              >
                 We&rsquo;d Love to Hear From You
               </h1>
             </RevealItem>
 
             <RevealItem className="mt-8">
-              <p className="mx-auto max-w-xl font-sans text-lg leading-relaxed text-muted">
-                Whether you have a question about our therapies, want to book a
-                consultation, or simply wish to learn more about Ayurveda —
-                we&rsquo;re here for you.
+              <p className={`mx-auto max-w-xl ${BODY} text-lg`}>
+                Whether you have a question about our therapies, want to book a consultation, or
+                simply wish to learn more about Ayurveda — we&rsquo;re here for you.
               </p>
             </RevealItem>
           </RevealGroup>
         </section>
 
         {/* ── Form + details ───────────────────────────────────────────── */}
-        <section className="bg-background px-6 pb-24 lg:px-12 lg:pb-32">
-          <div className="mx-auto grid max-w-content grid-cols-1 gap-16 md:grid-cols-2 md:gap-14">
+        <section className="relative px-6 pb-24 lg:px-12 lg:pb-32">
+          <SectionScrim focus="left" />
+
+          <div className="relative z-10 mx-auto grid max-w-content grid-cols-1 gap-16 md:grid-cols-2 md:gap-14">
             <div>
               <RevealGroup>
                 <RevealItem>
-                  <p className="mb-8 font-sans text-xs uppercase tracking-[0.25em] text-primary">
-                    Send a Message
-                  </p>
+                  <p className={`mb-8 ${EYEBROW}`}>Send a Message</p>
                 </RevealItem>
               </RevealGroup>
               <ContactForm />
@@ -68,8 +69,7 @@ export default function ContactPage() {
           cta="Book a Consultation"
           href="/book"
         />
-      </main>
-      <Footer />
-    </>
+      </>
+    </SiteShell>
   )
 }

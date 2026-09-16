@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import { RevealGroup, RevealItem } from '../ui/Reveal'
 import AnimatedLink from '../ui/AnimatedLink'
+import SectionScrim from '../ui/SectionScrim'
 
 /* ──────────────────────────────────────────────────────────────────────────
    The journal teaser, over the page photograph.
@@ -39,25 +40,6 @@ const FEATURED = {
   alt: 'Ayurvedic herbs, roots, powders and oils arranged around a stone mortar and pestle',
 }
 
-/* Wide: the mirror of AboutPractitioner's scrim, because the copy is on the
-   LEFT here and the card on the right. A radial pool does the work under the
-   text; the linear layer tips the balance across the width and feathers away
-   over the photograph's open right side. The card carries its own ground, so
-   the scrim is not asked to light it. */
-const SCRIM_WIDE =
-  'radial-gradient(ellipse 50% 60% at 27% 50%, rgba(0,0,0,0.44) 0%, rgba(0,0,0,0.27) 48%, transparent 78%),' +
-  'linear-gradient(to left, transparent 0%, rgba(0,0,0,0.04) 34%, rgba(0,0,0,0.17) 62%, rgba(0,0,0,0.30) 100%)'
-
-/* Narrow: the columns stack and the copy sits at the top with the card under
-   it, so the weight runs down the frame and eases off where the card begins. */
-const SCRIM_NARROW =
-  'linear-gradient(to bottom, rgba(0,0,0,0.46) 0%, rgba(0,0,0,0.40) 46%, rgba(0,0,0,0.26) 76%, rgba(0,0,0,0.20) 100%)'
-
-// Masked away at the section's own top and bottom edges so the treatment never
-// ends on a hard line against the section below. Same value AboutPractitioner
-// uses — the two sections are meant to open and close identically.
-const FEATHER = 'linear-gradient(to bottom, transparent 0%, #000 11%, #000 89%, transparent 100%)'
-
 export default function Journal() {
   return (
     /* The tint-and-hairline alternation this ran against the section above it
@@ -66,23 +48,14 @@ export default function Journal() {
     <section
       id="journal"
       data-snap-section
-      /* See RootedInTradition for why the viewport height is a minimum.
+      /* The viewport height is a MINIMUM, not a fixed height: content taller
+         than one screen grows rather than clipping, and SectionLock gives
+         anything that overruns its own bottom-aligned stop.
          overflow-x-hidden keeps the negatively-inset scrim from widening the
          document on narrow screens. */
       className="relative flex flex-col justify-center overflow-x-hidden px-6 py-24 motion-safe:min-h-screen lg:px-12"
     >
-      {/* Two scrims rather than one, because the gradient's direction has to
-          follow the layout — across the frame above md, down it below. */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 md:hidden"
-        style={{ background: SCRIM_NARROW, maskImage: FEATHER, WebkitMaskImage: FEATHER }}
-      />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 hidden md:block"
-        style={{ background: SCRIM_WIDE, maskImage: FEATHER, WebkitMaskImage: FEATHER }}
-      />
+      <SectionScrim focus="left" />
 
       {/* Six columns of copy against four of card (five below lg, where the
           columns themselves are too narrow to spare one), leaving 7 and 8 empty.

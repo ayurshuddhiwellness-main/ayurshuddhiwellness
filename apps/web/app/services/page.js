@@ -1,5 +1,4 @@
-import Navbar from '../../components/layout/Navbar'
-import Footer from '../../components/layout/Footer'
+import SiteShell from '../../components/layout/SiteShell'
 import ServicesGrid from '../../components/sections/ServicesGrid'
 import CTABanner from '../../components/sections/CTABanner'
 
@@ -11,13 +10,9 @@ export const metadata = {
 
 export default function ServicesPage() {
   return (
-    <>
-      <Navbar />
-      <main>
-        <ServicesGrid />
-        <CTABanner />
-      </main>
-      <Footer />
-    </>
+    <SiteShell>
+      <ServicesGrid />
+      <CTABanner />
+    </SiteShell>
   )
 }

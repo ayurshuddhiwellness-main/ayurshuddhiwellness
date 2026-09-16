@@ -3,17 +3,39 @@
 import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
-import Navbar from '../../components/layout/Navbar'
-import Footer from '../../components/layout/Footer'
+import SiteShell from '../../components/layout/SiteShell'
+import SectionScrim from '../../components/ui/SectionScrim'
+import { EYEBROW, HEADING, BODY, PANEL_CREAM, PANEL_CREAM_BG } from '../../components/ui/surfaces'
 import { EASE } from '../../components/ui/motion'
 import { useAuth } from '../../hooks/useAuth'
 
 // --- Mock data -------------------------------------------------------------
 // Swap to the real API when Firebase is connected (see loadServices/loadSlots).
 const MOCK_SERVICES = [
-  { id: '1', name: 'Ayurvedic Consultation', description: 'Personalised assessment of your unique constitution and health concerns.', duration: 60, price: 800, category: 'Consultation' },
-  { id: '2', name: 'Panchakarma Session', description: 'Classical five-step detoxification and rejuvenation therapy.', duration: 90, price: 1500, category: 'Therapy' },
-  { id: '3', name: 'Yoga & Pranayama', description: 'Guided yoga, breathing, and meditation tailored to your Prakriti.', duration: 45, price: 500, category: 'Wellness' },
+  {
+    id: '1',
+    name: 'Ayurvedic Consultation',
+    description: 'Personalised assessment of your unique constitution and health concerns.',
+    duration: 60,
+    price: 800,
+    category: 'Consultation',
+  },
+  {
+    id: '2',
+    name: 'Panchakarma Session',
+    description: 'Classical five-step detoxification and rejuvenation therapy.',
+    duration: 90,
+    price: 1500,
+    category: 'Therapy',
+  },
+  {
+    id: '3',
+    name: 'Yoga & Pranayama',
+    description: 'Guided yoga, breathing, and meditation tailored to your Prakriti.',
+    duration: 45,
+    price: 500,
+    category: 'Wellness',
+  },
 ]
 const MOCK_SLOTS = ['09:00', '10:00', '11:00', '14:00', '15:00', '16:00']
 
@@ -31,14 +53,26 @@ async function loadSlots(serviceId, dateISO) {
 function CheckIcon({ className = '' }) {
   return (
     <svg viewBox="0 0 20 20" fill="none" className={className} aria-hidden="true">
-      <path d="M5 10.5l3.2 3.2L15 7" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+      <path
+        d="M5 10.5l3.2 3.2L15 7"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
     </svg>
   )
 }
 function Chevron({ dir = 'left', className = '' }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
-      <path d={dir === 'left' ? 'M15 6l-6 6 6 6' : 'M9 6l6 6-6 6'} stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+      <path
+        d={dir === 'left' ? 'M15 6l-6 6 6 6' : 'M9 6l6 6-6 6'}
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
     </svg>
   )
 }
@@ -46,7 +80,12 @@ function Spinner({ className = '' }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" className={`animate-spin ${className}`} aria-hidden="true">
       <circle cx="12" cy="12" r="9" stroke="currentColor" strokeOpacity="0.25" strokeWidth="2.5" />
-      <path d="M21 12a9 9 0 0 0-9-9" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+      <path
+        d="M21 12a9 9 0 0 0-9-9"
+        stroke="currentColor"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+      />
     </svg>
   )
 }
@@ -66,10 +105,21 @@ function toISODate(d) {
   return `${y}-${m}-${day}`
 }
 function sameDay(a, b) {
-  return a && b && a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate()
+  return (
+    a &&
+    b &&
+    a.getFullYear() === b.getFullYear() &&
+    a.getMonth() === b.getMonth() &&
+    a.getDate() === b.getDate()
+  )
 }
 function formatLongDate(d) {
-  return d.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
+  return d.toLocaleDateString('en-IN', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  })
 }
 
 // ===========================================================================
@@ -77,13 +127,9 @@ export default function BookPage() {
   const { loading, user } = useAuth()
 
   return (
-    <>
-      <Navbar />
-      <main className="min-h-screen bg-background pb-24 pt-28 sm:pt-32">
-        {loading ? <LoadingSkeleton /> : user ? <BookingFlow /> : <AuthGate />}
-      </main>
-      <Footer />
-    </>
+    <SiteShell mainClassName="min-h-screen pb-24 pt-28 sm:pt-32">
+      {loading ? <LoadingSkeleton /> : user ? <BookingFlow /> : <AuthGate />}
+    </SiteShell>
   )
 }
 
@@ -92,9 +138,9 @@ function LoadingSkeleton() {
   return (
     <div className="mx-auto max-w-content px-6 lg:px-12">
       <div className="mx-auto max-w-md animate-pulse space-y-4 text-center">
-        <div className="mx-auto h-3 w-40 rounded bg-card" />
-        <div className="mx-auto h-9 w-72 rounded bg-card" />
-        <div className="mx-auto h-3 w-56 rounded bg-card" />
+        <div className="mx-auto h-3 w-40 rounded bg-white/25" />
+        <div className="mx-auto h-9 w-72 rounded bg-white/25" />
+        <div className="mx-auto h-3 w-56 rounded bg-white/25" />
       </div>
     </div>
   )
@@ -108,11 +154,12 @@ function AuthGate() {
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={stepTransition}
-        className="mx-auto max-w-md rounded-card border border-border bg-white p-10 text-center shadow-soft"
+        className="mx-auto max-w-md rounded-card border border-white/25 p-10 text-center shadow-[0_24px_60px_-28px_rgba(0,0,0,0.8)]"
       >
         <h1 className="font-serif text-3xl text-foreground">Sign in to book</h1>
         <p className="mt-3 font-sans text-sm leading-relaxed text-muted">
-          You need an account to schedule an appointment. Sign in or create one — it only takes a moment.
+          You need an account to schedule an appointment. Sign in or create one — it only takes a
+          moment.
         </p>
         <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
           <Link
@@ -137,7 +184,7 @@ function AuthGate() {
 const STEPS = ['Service', 'Date & Time', 'Confirm']
 function StepIndicator({ current }) {
   return (
-    <div className="mx-auto mt-8 flex max-w-md items-center justify-center">
+    <div className="relative z-10 mx-auto mt-8 flex max-w-md items-center justify-center">
       {STEPS.map((label, i) => {
         const n = i + 1
         const done = n < current
@@ -151,11 +198,17 @@ function StepIndicator({ current }) {
                     <CheckIcon className="h-3.5 w-3.5" />
                   </span>
                 ) : null}
-                <span className={`font-sans text-sm ${active ? 'font-medium text-primary' : 'text-muted'}`}>{label}</span>
+                <span
+                  className={`font-sans text-sm ${active ? 'font-medium text-background' : 'text-white/70'}`}
+                >
+                  {label}
+                </span>
               </div>
-              <span className={`mt-1 h-1 w-1 rounded-full transition-colors ${active ? 'bg-primary' : 'bg-transparent'}`} />
+              <span
+                className={`mt-1 h-1 w-1 rounded-full transition-colors ${active ? 'bg-background' : 'bg-transparent'}`}
+              />
             </div>
-            {i < STEPS.length - 1 && <span className="mx-3 h-px w-8 bg-border sm:w-12" />}
+            {i < STEPS.length - 1 && <span className="mx-3 h-px w-8 bg-white/30 sm:w-12" />}
           </div>
         )
       })}
@@ -183,12 +236,15 @@ function BookingFlow() {
     setStep(2)
   }
 
-  const chooseDate = useCallback(async (date) => {
-    setSelectedDate(date)
-    setSelectedSlot(null)
-    const available = await loadSlots(selectedService?.id, toISODate(date))
-    setSlots(available)
-  }, [selectedService])
+  const chooseDate = useCallback(
+    async (date) => {
+      setSelectedDate(date)
+      setSelectedSlot(null)
+      const available = await loadSlots(selectedService?.id, toISODate(date))
+      setSlots(available)
+    },
+    [selectedService]
+  )
 
   const confirm = () => {
     setStatus('processing')
@@ -197,26 +253,49 @@ function BookingFlow() {
   }
 
   return (
-    <div className="mx-auto max-w-content px-6 lg:px-12">
+    <div className="relative mx-auto max-w-content px-6 lg:px-12">
+      <SectionScrim focus="center" />
+
       {/* Hero */}
-      <div className="text-center">
-        <p className="font-sans text-sm uppercase tracking-[0.25em] text-muted">Book a consultation</p>
-        <h1 className="mt-4 font-serif text-4xl text-foreground sm:text-5xl">Begin your wellness journey.</h1>
-        <p className="mt-4 font-sans text-base text-muted">Choose a service to get started.</p>
+      <div className="relative z-10 text-center">
+        <p className={EYEBROW}>Book a consultation</p>
+        <h1 className={`mt-4 ${HEADING} text-4xl sm:text-5xl`}>Begin your wellness journey.</h1>
+        <p className={`mt-4 ${BODY} text-base`}>Choose a service to get started.</p>
       </div>
 
       <StepIndicator current={status === 'success' ? 3 : step} />
 
-      <div className="mt-12">
+      <div
+        style={{ background: PANEL_CREAM_BG }}
+        className={`relative z-10 mt-12 ${PANEL_CREAM} p-6 sm:p-10`}
+      >
         <AnimatePresence mode="wait">
           {step === 1 && (
-            <motion.div key="step1" variants={stepVariants} initial="initial" animate="animate" exit="exit" transition={stepTransition}>
-              <ServiceStep services={services} selected={selectedService} onSelect={chooseService} />
+            <motion.div
+              key="step1"
+              variants={stepVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              transition={stepTransition}
+            >
+              <ServiceStep
+                services={services}
+                selected={selectedService}
+                onSelect={chooseService}
+              />
             </motion.div>
           )}
 
           {step === 2 && (
-            <motion.div key="step2" variants={stepVariants} initial="initial" animate="animate" exit="exit" transition={stepTransition}>
+            <motion.div
+              key="step2"
+              variants={stepVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              transition={stepTransition}
+            >
               <DateTimeStep
                 service={selectedService}
                 selectedDate={selectedDate}
@@ -231,7 +310,14 @@ function BookingFlow() {
           )}
 
           {step === 3 && (
-            <motion.div key="step3" variants={stepVariants} initial="initial" animate="animate" exit="exit" transition={stepTransition}>
+            <motion.div
+              key="step3"
+              variants={stepVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              transition={stepTransition}
+            >
               <ConfirmStep
                 service={selectedService}
                 date={selectedDate}
@@ -260,7 +346,7 @@ function ServiceStep({ services, selected, onSelect }) {
           <button
             key={svc.id}
             onClick={() => onSelect(svc)}
-            className={`group flex flex-col rounded-2xl border bg-white p-8 text-left transition-all duration-300 hover:-translate-y-1 hover:shadow-soft ${
+            className={`group flex flex-col rounded-2xl border bg-[color-mix(in_srgb,var(--color-background)_94%,transparent)] p-8 text-left transition-all duration-300 hover:-translate-y-1 hover:shadow-soft ${
               isSel ? 'border-2 border-primary bg-primary/5' : 'border border-border'
             }`}
           >
@@ -283,12 +369,24 @@ function ServiceStep({ services, selected, onSelect }) {
 }
 
 // --- Step 2: date & time ---------------------------------------------------
-function DateTimeStep({ service, selectedDate, selectedSlot, slots, onBack, onPickDate, onPickSlot, onContinue }) {
+function DateTimeStep({
+  service,
+  selectedDate,
+  selectedSlot,
+  slots,
+  onBack,
+  onPickDate,
+  onPickSlot,
+  onContinue,
+}) {
   const canContinue = selectedDate && selectedSlot
   return (
     <div>
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <button onClick={onBack} className="flex items-center gap-1 font-sans text-sm text-primary transition-opacity hover:opacity-70">
+        <button
+          onClick={onBack}
+          className="flex items-center gap-1 font-sans text-sm text-primary transition-opacity hover:opacity-70"
+        >
           <Chevron dir="left" className="h-4 w-4" /> Change service
         </button>
         <span className="w-fit rounded-full bg-card px-4 py-2 font-sans text-sm text-foreground">
@@ -299,7 +397,9 @@ function DateTimeStep({ service, selectedDate, selectedSlot, slots, onBack, onPi
       <div className="mt-8 grid grid-cols-1 gap-12 md:grid-cols-2">
         <Calendar selectedDate={selectedDate} onPick={onPickDate} />
         <div>
-          <h3 className="font-sans text-sm uppercase tracking-widest text-muted">Available Times</h3>
+          <h3 className="font-sans text-sm uppercase tracking-widest text-muted">
+            Available Times
+          </h3>
           {selectedDate ? (
             <div className="mt-5 flex flex-wrap gap-3">
               {slots.map((slot) => {
@@ -309,7 +409,9 @@ function DateTimeStep({ service, selectedDate, selectedSlot, slots, onBack, onPi
                     key={slot}
                     onClick={() => onPickSlot(slot)}
                     className={`rounded-full border px-4 py-2 font-sans text-sm transition-colors duration-200 ${
-                      isSel ? 'border-primary bg-primary text-white' : 'border-border text-foreground hover:bg-primary hover:text-white'
+                      isSel
+                        ? 'border-primary bg-primary text-white'
+                        : 'border-border text-foreground hover:bg-primary hover:text-white'
                     }`}
                   >
                     {slot}
@@ -318,7 +420,9 @@ function DateTimeStep({ service, selectedDate, selectedSlot, slots, onBack, onPi
               })}
             </div>
           ) : (
-            <p className="mt-5 font-sans text-sm text-muted">Select a date to see available times.</p>
+            <p className="mt-5 font-sans text-sm text-muted">
+              Select a date to see available times.
+            </p>
           )}
         </div>
       </div>
@@ -328,7 +432,9 @@ function DateTimeStep({ service, selectedDate, selectedSlot, slots, onBack, onPi
           onClick={onContinue}
           disabled={!canContinue}
           className={`rounded-full px-8 py-3 font-sans text-sm font-medium transition-all duration-300 ${
-            canContinue ? 'bg-primary text-white hover:bg-primary-hover' : 'cursor-not-allowed bg-border text-muted'
+            canContinue
+              ? 'bg-primary text-white hover:bg-primary-hover'
+              : 'cursor-not-allowed bg-border text-muted'
           }`}
         >
           Continue →
@@ -382,7 +488,9 @@ function Calendar({ selectedDate, onPick }) {
 
       <div className="mt-4 grid grid-cols-7 gap-1 text-center">
         {WEEKDAYS.map((w) => (
-          <span key={w} className="py-1 font-sans text-xs uppercase tracking-wider text-muted">{w}</span>
+          <span key={w} className="py-1 font-sans text-xs uppercase tracking-wider text-muted">
+            {w}
+          </span>
         ))}
         {cells.map((date, idx) => {
           if (!date) return <span key={`e${idx}`} />
@@ -422,7 +530,7 @@ function ConfirmStep({ service, date, slot, notes, setNotes, status, onBack, onC
         initial={{ opacity: 0, scale: 0.96 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={stepTransition}
-        className="mx-auto max-w-lg rounded-2xl border border-border bg-white p-10 text-center shadow-soft"
+        className="mx-auto max-w-lg rounded-2xl border border-border bg-[color-mix(in_srgb,var(--color-background)_94%,transparent)] p-10 text-center shadow-soft"
       >
         <span className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary">
           <CheckIcon className="h-8 w-8" />
@@ -445,16 +553,20 @@ function ConfirmStep({ service, date, slot, notes, setNotes, status, onBack, onC
   const processing = status === 'processing'
   return (
     <div className="mx-auto max-w-lg">
-      <div className="rounded-2xl border border-border bg-white p-8 shadow-soft">
+      <div className="rounded-2xl border border-white/25 p-8 shadow-[0_24px_60px_-28px_rgba(0,0,0,0.8)]">
         <h2 className="font-serif text-2xl text-foreground">{service?.name}</h2>
         <p className="mt-2 font-sans text-sm text-muted">
           {date ? formatLongDate(date) : ''} · {slot}
         </p>
-        <p className="mt-1 font-sans text-sm text-muted">{service?.duration} min · ₹{service?.price}</p>
+        <p className="mt-1 font-sans text-sm text-muted">
+          {service?.duration} min · ₹{service?.price}
+        </p>
 
         <div className="my-6 h-px w-full bg-border" />
 
-        <label htmlFor="notes" className="font-sans text-sm text-foreground">Any notes for your practitioner</label>
+        <label htmlFor="notes" className="font-sans text-sm text-foreground">
+          Any notes for your practitioner
+        </label>
         <textarea
           id="notes"
           value={notes}

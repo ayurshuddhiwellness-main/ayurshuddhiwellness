@@ -6,6 +6,17 @@ import { motion, useReducedMotion } from 'framer-motion'
 import { RevealGroup, RevealItem } from '../ui/Reveal'
 import { EASE } from '../ui/motion'
 import MaskReveal from '../ui/MaskReveal'
+import SectionScrim from '../ui/SectionScrim'
+import {
+  EYEBROW,
+  HEADING,
+  BODY,
+  PANEL_SOFT,
+  PANEL_SOFT_BG,
+  PILL,
+  BTN_PRIMARY,
+  FOCUS_RING,
+} from '../ui/surfaces'
 import AnimatedLink from '../ui/AnimatedLink'
 
 /* Detail page for one service.
@@ -24,7 +35,7 @@ export default function ServiceDetail({ service }) {
   return (
     <>
       {/* ── Hero ───────────────────────────────────────────────────────── */}
-      <section className="relative h-[62vh] min-h-[420px] w-full overflow-hidden bg-card">
+      <section className="relative h-[62vh] min-h-[420px] w-full overflow-hidden">
         <Image
           src={service.image}
           alt={service.alt}
@@ -44,9 +55,7 @@ export default function ServiceDetail({ service }) {
             <motion.p
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={
-                reduce ? { duration: 0 } : { duration: 0.5, ease: EASE, delay: 0.1 }
-              }
+              transition={reduce ? { duration: 0 } : { duration: 0.5, ease: EASE, delay: 0.1 }}
               className="mb-5 font-sans text-sm uppercase tracking-[0.25em] text-white/70"
             >
               Our Services
@@ -62,12 +71,14 @@ export default function ServiceDetail({ service }) {
       </section>
 
       {/* ── Intro ──────────────────────────────────────────────────────── */}
-      <section className="bg-background px-6 py-20 lg:px-12 lg:py-24">
-        <RevealGroup className="mx-auto max-w-content">
+      <section className="relative px-6 py-20 lg:px-12 lg:py-24">
+        <SectionScrim focus="left" />
+
+        <RevealGroup className="relative z-10 mx-auto max-w-content">
           <RevealItem>
             <Link
               href="/services"
-              className="group inline-flex items-center gap-2 font-sans text-sm text-muted transition-colors duration-300 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-4 focus-visible:ring-offset-background"
+              className={`group inline-flex items-center gap-2 font-sans text-sm text-white/85 transition-colors duration-300 hover:text-white ${FOCUS_RING}`}
             >
               <span
                 aria-hidden="true"
@@ -80,60 +91,55 @@ export default function ServiceDetail({ service }) {
           </RevealItem>
 
           <RevealItem className="mt-8">
-            <p className="max-w-2xl font-serif text-2xl font-normal leading-snug text-foreground md:text-3xl">
-              {service.intro}
-            </p>
+            <p className={`max-w-2xl ${HEADING} text-2xl md:text-3xl`}>{service.intro}</p>
           </RevealItem>
         </RevealGroup>
       </section>
 
       {/* ── What the treatment involves ────────────────────────────────── */}
-      <section className="relative z-10 overflow-x-hidden rounded-t-[2.5rem] bg-card px-6 py-24 shadow-[0_-20px_40px_-15px_rgba(0,0,0,0.08)] lg:px-12 lg:py-28">
-        <RevealGroup className="mx-auto max-w-content">
+      <section className="relative z-10 overflow-x-hidden px-6 py-24 lg:px-12 lg:py-28">
+        <SectionScrim focus="center" />
+
+        <RevealGroup className="relative z-10 mx-auto max-w-content">
           <RevealItem>
-            <p className="mb-4 font-sans text-sm uppercase tracking-[0.25em] text-primary">
-              What It Involves
-            </p>
+            <p className={`mb-4 ${EYEBROW}`}>What It Involves</p>
           </RevealItem>
-          <h2 className="font-serif text-4xl font-normal leading-tight text-foreground md:text-5xl">
+          <h2 className={`${HEADING} text-4xl md:text-5xl`}>
             <MaskReveal reduce={reduce}>How we work with you</MaskReveal>
           </h2>
         </RevealGroup>
 
-        <RevealGroup className="mx-auto mt-14 grid max-w-content grid-cols-1 items-start gap-8 md:mt-16 md:grid-cols-2">
+        <RevealGroup className="relative z-10 mx-auto mt-14 grid max-w-content grid-cols-1 items-start gap-8 md:mt-16 md:grid-cols-2">
           {service.components.map((c, i) => (
             <RevealItem key={c.title}>
-              <article className="group relative h-full overflow-hidden rounded-2xl border border-border bg-background p-8 transition-[transform,border-color,box-shadow] duration-300 ease-out hover:-translate-y-1 hover:border-primary hover:shadow-soft motion-reduce:transition-none motion-reduce:hover:translate-y-0">
+              <article
+                style={{ background: PANEL_SOFT_BG }}
+                className={`group relative h-full overflow-hidden ${PANEL_SOFT} p-8 transition-[transform,border-color,box-shadow] duration-300 ease-out hover:-translate-y-1 hover:border-white/35 motion-reduce:transition-none motion-reduce:hover:translate-y-0`}
+              >
                 {/* Ghost numeral — decorative, settles in behind the content */}
                 <motion.span
                   aria-hidden="true"
                   initial={{ opacity: 0, scale: 0.92 }}
                   whileInView={{ opacity: 0.07, scale: 1 }}
                   viewport={{ once: true, margin: '-80px' }}
-                  transition={
-                    reduce
-                      ? { duration: 0 }
-                      : { duration: 1.1, ease: EASE, delay: 0.15 }
-                  }
-                  className="pointer-events-none absolute -right-2 -top-6 select-none font-serif text-[7rem] leading-none text-primary"
+                  transition={reduce ? { duration: 0 } : { duration: 1.1, ease: EASE, delay: 0.15 }}
+                  className="pointer-events-none absolute -right-2 -top-6 select-none font-serif text-[7rem] leading-none text-white"
                 >
                   {String(i + 1).padStart(2, '0')}
                 </motion.span>
 
                 <div className="relative">
-                  <p className="font-sans text-xs uppercase tracking-[0.25em] text-primary">
+                  <p className="font-sans text-xs uppercase tracking-[0.25em] text-white/75">
                     {String(i + 1).padStart(2, '0')}
                   </p>
 
-                  <h3 className="mt-3 font-serif text-2xl font-normal leading-snug text-foreground">
+                  <h3 className={`mt-3 ${HEADING} text-2xl`}>
                     <MaskReveal reduce={reduce} duration={0.8} delay={0.1}>
                       {c.title}
                     </MaskReveal>
                   </h3>
 
-                  <p className="mt-3 font-sans text-base leading-relaxed text-muted">
-                    {c.body}
-                  </p>
+                  <p className={`mt-3 ${BODY} text-base`}>{c.body}</p>
                 </div>
               </article>
             </RevealItem>
@@ -151,10 +157,7 @@ export default function ServiceDetail({ service }) {
             <RevealItem className="mt-6">
               <ul className="flex flex-wrap gap-3">
                 {service.conditions.map((c) => (
-                  <li
-                    key={c}
-                    className="rounded-full border border-border bg-background px-4 py-1.5 font-sans text-sm tracking-wide text-foreground"
-                  >
+                  <li key={c} className={PILL}>
                     {c}
                   </li>
                 ))}
@@ -165,31 +168,27 @@ export default function ServiceDetail({ service }) {
       </section>
 
       {/* ── CTA ────────────────────────────────────────────────────────── */}
-      <section className="bg-primary px-6 py-24 lg:px-12 lg:py-28">
-        <RevealGroup className="mx-auto max-w-content text-center">
+      <section className="relative px-6 py-24 lg:px-12 lg:py-28">
+        <SectionScrim focus="center" />
+
+        <RevealGroup className="relative z-10 mx-auto max-w-content text-center">
           <RevealItem>
-            <p className="mb-5 font-sans text-sm uppercase tracking-[0.25em] text-white/60">
-              Begin Your Journey
-            </p>
+            <p className={`mb-5 ${EYEBROW}`}>Begin Your Journey</p>
           </RevealItem>
 
-          <h2 className="font-serif text-4xl font-normal leading-tight text-white md:text-5xl">
+          <h2 className={`${HEADING} text-4xl md:text-5xl`}>
             <MaskReveal reduce={reduce}>Ready to start?</MaskReveal>
           </h2>
 
           <RevealItem className="mt-5">
-            <p className="mx-auto max-w-lg font-sans text-lg leading-relaxed text-white/70">
-              Book a consultation and we will tell you whether {service.title} is
-              the right place to begin.
+            <p className={`mx-auto max-w-lg ${BODY} text-lg`}>
+              Book a consultation and we will tell you whether {service.title} is the right place to
+              begin.
             </p>
           </RevealItem>
 
           <RevealItem className="mt-10">
-            <AnimatedLink
-              href="/book"
-              arrow
-              className="inline-flex items-center rounded-full bg-white px-8 py-3.5 font-sans text-sm font-medium text-primary shadow-soft transition-shadow duration-300 hover:shadow-md"
-            >
+            <AnimatedLink href="/book" arrow className={BTN_PRIMARY}>
               Book a Consultation
             </AnimatedLink>
           </RevealItem>

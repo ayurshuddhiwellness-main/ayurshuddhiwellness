@@ -4,6 +4,8 @@
 // the booking flow works in every environment. resend is imported lazily so the
 // package is only loaded when a key is actually present.
 
+import { formatClinicDateTime } from './clinic-time.js'
+
 const FROM = process.env.RESEND_FROM || 'AyurShuddhi <bookings@ayurshuddhi.com>'
 // Where /contact enquiries land. Same address the page publishes to visitors.
 const CONTACT_TO = process.env.CONTACT_TO || 'ayurshuddhiwellness@gmail.com'
@@ -42,13 +44,13 @@ function escapeHtml(value) {
     .replaceAll("'", '&#39;')
 }
 
+// slot_datetime is clinic-local naive ISO. Rendering it used to parse the
+// string with a bare `new Date()`, which resolves in the server's zone — so on
+// a UTC host every email announced the appointment 5.5 hours late. The zone
+// handling now lives in lib/clinic-time.js.
 function formatDateTime(iso) {
   try {
-    return new Date(iso).toLocaleString('en-IN', {
-      dateStyle: 'full',
-      timeStyle: 'short',
-      timeZone: 'Asia/Kolkata',
-    })
+    return formatClinicDateTime(iso)
   } catch {
     return iso
   }

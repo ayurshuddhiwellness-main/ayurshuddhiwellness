@@ -7,16 +7,8 @@
 
 import { ok, fail, guard } from '../../../lib/api-response'
 import { enforceRateLimit } from '../../../lib/rate-limit'
-import { isValidEmail } from '../../../lib/validation'
+import { isValidEmail, CONTACT_SUBJECTS } from '../../../lib/validation'
 import { sendContactEnquiry } from '../../../lib/email'
-
-const SUBJECTS = [
-  'General Inquiry',
-  'Book a Consultation',
-  'Therapy Question',
-  'Feedback',
-  'Other',
-]
 
 const LIMITS = { name: 100, email: 200, phone: 20, message: 2000 }
 
@@ -37,7 +29,7 @@ export async function POST(request) {
     if (!isValidEmail(email)) {
       return fail(400, 'Please enter a valid email address')
     }
-    if (!SUBJECTS.includes(subject)) {
+    if (!CONTACT_SUBJECTS.includes(subject)) {
       return fail(400, 'Unrecognised subject')
     }
     for (const [field, max] of Object.entries(LIMITS)) {

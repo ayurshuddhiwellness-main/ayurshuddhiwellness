@@ -1,8 +1,6 @@
 import dynamic from 'next/dynamic'
-import Navbar from '../components/layout/Navbar'
-import Footer from '../components/layout/Footer'
+import SiteShell from '../components/layout/SiteShell'
 import SectionLock from '../components/ui/SectionLock'
-import PageBackdrop from '../components/ui/PageBackdrop'
 import Hero from '../components/sections/Hero'
 import ServiceSection, { ServicesHeader, ServicesCTA } from '../components/sections/ServiceSection'
 import Journal from '../components/sections/Journal'
@@ -20,16 +18,11 @@ export const metadata = {
 
 export default function HomePage() {
   return (
-    <>
-      {/* One photograph, fixed, behind every section below — which is why none
-          of them paint a ground of their own. No scrim over it. */}
-      <PageBackdrop />
-
-      {/* One gesture per section, across the whole page. Each section below
-          carries data-snap-section; the lock reads its stops off those. */}
-      <SectionLock />
-      <Navbar />
-      <main>
+    /* The photograph, the bar and the footer all come from the shell now.
+       One gesture per section is this page's alone: each section below carries
+       data-snap-section and the lock reads its stops off those. */
+    <SiteShell before={<SectionLock />}>
+      <>
         {/* 1 — Landing hero */}
         <Hero />
 
@@ -37,11 +30,10 @@ export default function HomePage() {
         <Philosophy />
 
         {/* 3 — Your Practitioner (shared with /about, which owns the full story).
-            Carries the "/#about" nav target on this page only. `onMedia` is
-            what tells the component it is sitting over the photograph above
-            rather than on linen: light type, its own graded scrim, and the
-            short version of the biography. */}
-        <AboutPractitioner exploreLink snap onMedia id="about" />
+            Carries the "/#about" nav target on this page only. `summary` is
+            what gets the short version of the biography here; the long one
+            lives on /about. */}
+        <AboutPractitioner exploreLink snap summary id="about" />
 
         {/* 4, 5, 6 — the three pillar services, one full screen each. Order is
             fixed: Ayurveda → Panchakarma → Yoga. The photograph alternates
@@ -54,8 +46,7 @@ export default function HomePage() {
 
         {/* 7 — Journal */}
         <Journal />
-      </main>
-      <Footer />
-    </>
+      </>
+    </SiteShell>
   )
 }

@@ -1,6 +1,7 @@
 'use client'
 
 import { RevealGroup, RevealItem } from '../ui/Reveal'
+import { EYEBROW, FOCUS_RING } from '../ui/surfaces'
 
 /* Contact details are the same ones the Footer carries. Icons match the
    Footer's set — 16x16, currentColor, 1.5 stroke. */
@@ -14,7 +15,7 @@ const iconProps = {
   strokeWidth: 1.5,
   strokeLinecap: 'round',
   strokeLinejoin: 'round',
-  className: 'mt-1 shrink-0 text-primary',
+  className: 'mt-1 shrink-0 text-white/70',
   'aria-hidden': 'true',
 }
 
@@ -63,9 +64,7 @@ export default function ContactInfo() {
   return (
     <RevealGroup>
       <RevealItem>
-        <p className="font-sans text-xs uppercase tracking-[0.25em] text-primary">
-          Find Us
-        </p>
+        <p className={EYEBROW}>Find Us</p>
       </RevealItem>
 
       <RevealItem className="mt-8">
@@ -74,20 +73,18 @@ export default function ContactInfo() {
             <li key={detail.label} className="flex items-start gap-4">
               {detail.icon}
               <div>
-                <p className="font-sans text-xs uppercase tracking-[0.25em] text-muted">
+                <p className="font-sans text-xs uppercase tracking-[0.25em] text-white/70">
                   {detail.label}
                 </p>
                 {detail.href ? (
                   <a
                     href={detail.href}
-                    className="mt-1.5 block font-sans text-base text-foreground transition-colors duration-300 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-4 focus-visible:ring-offset-background"
+                    className={`mt-1.5 block font-sans text-base text-background transition-colors duration-300 hover:text-white ${FOCUS_RING}`}
                   >
                     {detail.value}
                   </a>
                 ) : (
-                  <p className="mt-1.5 font-sans text-base text-foreground">
-                    {detail.value}
-                  </p>
+                  <p className="mt-1.5 font-sans text-base text-background">{detail.value}</p>
                 )}
               </div>
             </li>
@@ -95,8 +92,8 @@ export default function ContactInfo() {
         </ul>
       </RevealItem>
 
-      <RevealItem className="mt-10 border-t border-border pt-8">
-        <p className="font-sans text-xs uppercase tracking-[0.25em] text-muted">
+      <RevealItem className="mt-10 border-t border-white/20 pt-8">
+        <p className="font-sans text-xs uppercase tracking-[0.25em] text-white/70">
           Business Hours
         </p>
         <dl className="mt-4 flex flex-col gap-2">
@@ -105,17 +102,15 @@ export default function ContactInfo() {
               key={h.days}
               className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1"
             >
-              <dt className="font-sans text-sm text-foreground">{h.days}</dt>
-              <dd className="font-sans text-sm tabular-nums text-muted">
-                {h.time}
-              </dd>
+              <dt className="font-sans text-sm text-background">{h.days}</dt>
+              <dd className="font-sans text-sm tabular-nums text-white/75">{h.time}</dd>
             </div>
           ))}
         </dl>
       </RevealItem>
 
       <RevealItem className="mt-10">
-        <div className="overflow-hidden rounded-card border border-border">
+        <div className="overflow-hidden rounded-2xl border border-white/20 shadow-[0_24px_60px_-28px_rgba(0,0,0,0.8)]">
           <iframe
             title={`Map showing AyurshuddhiWellness at ${ADDRESS}`}
             src={`https://maps.google.com/maps?q=${encodeURIComponent(ADDRESS)}&output=embed`}

@@ -1,6 +1,8 @@
 'use client'
 
 import { RevealGroup, RevealItem } from '../ui/Reveal'
+import SectionScrim from '../ui/SectionScrim'
+import { EYEBROW, HEADING, PANEL_CREAM, PANEL_CREAM_BG, LINK } from '../ui/surfaces'
 import AnimatedLink from '../ui/AnimatedLink'
 import { BOOKINGS } from '../../lib/profile-mock'
 
@@ -24,18 +26,16 @@ const ACTIONS = [
 
 export default function ProfileBookings() {
   return (
-    <section className="bg-background px-6 pb-24 lg:px-12 lg:pb-32">
+    <section className="relative px-6 pb-24 lg:px-12 lg:pb-32">
+      <SectionScrim focus="left" />
+
       <div className="mx-auto max-w-content">
         <RevealGroup>
           <RevealItem>
-            <p className="mb-4 font-sans text-sm uppercase tracking-[0.25em] text-primary">
-              Appointments
-            </p>
+            <p className={`mb-4 ${EYEBROW}`}>Appointments</p>
           </RevealItem>
           <RevealItem>
-            <h2 className="font-serif text-3xl font-normal leading-tight text-foreground md:text-4xl">
-              Your Appointments
-            </h2>
+            <h2 className={`${HEADING} text-3xl md:text-4xl`}>Your Appointments</h2>
           </RevealItem>
         </RevealGroup>
 
@@ -45,7 +45,10 @@ export default function ProfileBookings() {
 
             return (
               <RevealItem key={booking.id}>
-                <article className="flex flex-col gap-4 rounded-2xl border border-border bg-card p-6 transition-colors duration-300 hover:border-primary md:flex-row md:items-center md:justify-between md:p-7">
+                <article
+                  style={{ background: PANEL_CREAM_BG }}
+                  className={`flex flex-col gap-4 ${PANEL_CREAM} p-6 transition-colors duration-300 md:flex-row md:items-center md:justify-between md:p-7`}
+                >
                   <div>
                     <h3 className="font-sans text-base font-medium text-foreground">
                       {booking.service}
@@ -77,16 +80,11 @@ export default function ProfileBookings() {
         </RevealGroup>
 
         {/* Account actions */}
-        <RevealGroup className="mt-16 border-t border-border pt-8">
+        <RevealGroup className="relative z-10 mt-16 border-t border-white/20 pt-8">
           <RevealItem>
             <div className="flex flex-wrap items-center gap-x-8 gap-y-4">
               {ACTIONS.map((action) => (
-                <AnimatedLink
-                  key={action.label}
-                  href={action.href}
-                  scale={false}
-                  className="font-sans text-sm text-muted underline underline-offset-4 transition-colors duration-300 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-4 focus-visible:ring-offset-background"
-                >
+                <AnimatedLink key={action.label} href={action.href} scale={false} className={LINK}>
                   {action.label}
                 </AnimatedLink>
               ))}

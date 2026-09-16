@@ -188,8 +188,12 @@ export function ServicesCTA() {
   return (
     <RevealGroup className="mt-12 flex flex-wrap items-center gap-x-8 gap-y-4">
       <RevealItem>
+        {/* /book, not "#contact". That anchor resolved to the FOOTER, which
+            carries id="contact" — so the page's primary call to action
+            scrolled to the bottom of the page instead of opening the booking
+            flow. Same fix CTABanner documents for the same reason. */}
         <AnimatedLink
-          href="#contact"
+          href="/book"
           arrow
           className="inline-flex items-center rounded-full bg-primary px-7 py-3 font-sans text-sm font-medium text-white transition-colors duration-300 hover:bg-primary-hover"
         >

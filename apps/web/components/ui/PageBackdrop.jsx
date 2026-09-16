@@ -50,9 +50,19 @@ const SRC = '/images/Landing%20Page/hero_background.PNG'
 const SCRIM =
   'linear-gradient(to bottom, rgba(0,0,0,0.46) 0%, rgba(0,0,0,0.34) 45%, rgba(0,0,0,0.34) 55%, rgba(0,0,0,0.46) 100%)'
 
-export default function PageBackdrop() {
+/* `focus` is the one thing a page may tune. The photograph is 1536x1024 and
+   every viewport crops it differently — at 390px wide a centred `cover` throws
+   away most of the frame's width and lands on whatever happens to be in the
+   middle. A page (or a breakpoint) can therefore aim the crop without the
+   asset itself being touched, which is the only lever Part 2 asks for.
+
+   Values are plain `object-position` strings. Default centre, which is what
+   the homepage has always used and must keep. */
+export default function PageBackdrop({ focus = 'center' }) {
   return (
-    <div aria-hidden="true" className="pointer-events-none fixed inset-0 -z-10">
+    /* data-site-backdrop is a stable hook for the QA harness to assert the
+       backdrop is actually present and painting on every route. */
+    <div aria-hidden="true" data-site-backdrop className="pointer-events-none fixed inset-0 -z-10">
       <Image
         src={SRC}
         alt=""
@@ -60,7 +70,8 @@ export default function PageBackdrop() {
         sizes="100vw"
         // The backdrop for the whole page, so it leads the load.
         priority
-        className="object-cover object-center"
+        className="object-cover"
+        style={{ objectPosition: focus }}
       />
       <div className="absolute inset-0" style={{ background: SCRIM }} />
     </div>

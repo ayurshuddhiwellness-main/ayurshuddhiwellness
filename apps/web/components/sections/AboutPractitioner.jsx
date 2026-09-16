@@ -4,72 +4,30 @@ import Image from 'next/image'
 import { motion, useReducedMotion } from 'framer-motion'
 import { EASE } from '../ui/motion'
 import MaskReveal from '../ui/MaskReveal'
+import SectionScrim from '../ui/SectionScrim'
 import AnimatedLink from '../ui/AnimatedLink'
 
 const CREDENTIALS = ['Nadi Vaidya', 'Ayurveda', 'Human Design', 'Spirituality']
 
 /* ──────────────────────────────────────────────────────────────────────────
-   Two renderings of one section.
+   One section, rendered over the page photograph, on two routes.
 
-   /about renders this on linen, in the dark tokens, with the full story — it
-   is the page that owns the biography. The homepage renders it over the fixed
-   photograph (PageBackdrop), where those same dark tokens were unreadable:
-   #1E2220 body copy on a darkened picture. `onMedia` is what tells the two
-   apart, and it moves three things together — the palette inverts to light,
-   the section lays a scrim of its own, and the copy shortens to a summary,
-   because the long version has a page of its own to live on.
+   This used to carry a second palette — dark tokens on linen — selected by an
+   `onMedia` flag, from when /about was a linen page and only the homepage sat
+   over PageBackdrop. Once the shared backdrop put the photograph behind every
+   route, both call sites passed `onMedia` and that whole branch became
+   unreachable: a table of classes describing a rendering the site no longer
+   produces. It has been removed rather than left to be read as a live option.
 
-   Measured the way ServiceSection was: the dark tokens need an almost opaque
-   linen bed to clear 4.5:1 over this photograph, whereas light type on a
-   graded dark scrim clears it while leaving the picture visible through.
+   What remains is the measurement that decided it. The dark tokens need an
+   almost opaque linen bed to clear 4.5:1 over this photograph — an opaque card
+   in all but name — whereas light type on a graded dark scrim clears it while
+   leaving the picture visible through. ServiceSection documents the same trade.
 
-   Every class the two renderings disagree on is in the table below rather than
-   spread through the JSX as a dozen ternaries, so the /about column can be
-   read straight down and checked against what that page rendered before.
+   `summary` still varies, and is a separate axis from palette: the homepage
+   gets the short biography, /about keeps the long one because it is the page
+   that owns the full story.
    ────────────────────────────────────────────────────────────────────────── */
-
-/* Wide: the weight is carried toward the copy column on the right and feathers
-   away to nothing over the portrait, so the left of the frame — the
-   photograph's open foreground — is left alone. A radial pool does the work
-   under the copy itself; the linear layer only tips the balance across the
-   width. Deliberately no flat fill: a uniform box over this section is the
-   black rectangle this replaces. */
-const SCRIM_WIDE =
-  'radial-gradient(ellipse 54% 62% at 74% 50%, rgba(0,0,0,0.44) 0%, rgba(0,0,0,0.27) 48%, transparent 78%),' +
-  'linear-gradient(to right, transparent 0%, rgba(0,0,0,0.04) 34%, rgba(0,0,0,0.17) 62%, rgba(0,0,0,0.30) 100%)'
-
-/* Narrow: the columns stack, so the copy sits under the portrait rather than
-   beside it and the weight has to run down the frame instead of across it. */
-const SCRIM_NARROW =
-  'linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.10) 20%, rgba(0,0,0,0.40) 52%, rgba(0,0,0,0.44) 100%)'
-
-/* Both scrims are masked away at the section's own top and bottom edges, so
-   the treatment never ends on a hard line where the next section begins — the
-   photograph runs on underneath it, uninterrupted. */
-const FEATHER = 'linear-gradient(to bottom, transparent 0%, #000 11%, #000 89%, transparent 100%)'
-
-/* On linen. These are the values this section shipped with, unchanged: /about
-   renders exactly what it rendered before. */
-const LINEN = {
-  grid: 'gap-14 md:grid-cols-12 md:gap-16',
-  portrait: 'relative',
-  /* KNOWN, LEFT ALONE: `bg-primary/10` compiles to fully opaque sage. The
-     theme colours are bare var() values with no <alpha-value>, so Tailwind
-     drops the alpha modifier (the same trap Hero.jsx and Navbar.jsx document)
-     and this offset block renders at 100%, not the 10% it reads as. The
-     homepage row below uses color-mix and is correct; this one is kept as-is
-     so /about is not changed by a redesign it was not part of. */
-  offset: 'bg-primary/10',
-  frame: 'border-border bg-background',
-  eyebrow: 'mb-4 text-sm text-primary',
-  heading: 'text-4xl text-foreground md:text-5xl',
-  subtitle: 'mt-4 text-primary',
-  body: 'mt-6 max-w-lg text-lg text-muted',
-  pillRow: 'mt-10 gap-3',
-  pill: 'border-border px-4 py-1.5 text-foreground',
-  ctaRow: 'mt-10',
-  cta: 'focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card',
-}
 
 /* Over the photograph. Light type throughout, a text-shadow on anything set
    small enough to be eaten by a busy frame, and a rhythm down the column that
@@ -132,40 +90,27 @@ const pillStill = {
   visible: { opacity: 1, y: 0, transition: { duration: 0 } },
 }
 
-/* The pull-quote, written once so the two layouts can put it in two different
-   places without the words existing twice.
-
-   On /about it stays where it has always been — in the right-hand column under
-   the biography, hung off a sage rule. On the homepage it is lifted out of the
-   practitioner's details entirely and closes the section as a band of its own:
-   sat inside the column it was competing with the name, the pills and the call
-   to action at once, and losing to the photograph behind all four. */
-function PullQuote({ onMedia, reduce, variants }) {
+/* The pull-quote. It closes the section as a band of its own rather than
+   sitting inside the practitioner's column: in the column it competed with the
+   name, the pills and the call to action at once, and lost to the photograph
+   behind all four. */
+function PullQuote({ reduce, variants }) {
   return (
     <motion.blockquote
       variants={variants}
-      className={onMedia ? 'mx-auto mt-14 max-w-2xl text-center md:mt-16' : 'relative mt-10 pl-6'}
+      className="mx-auto mt-14 max-w-2xl text-center md:mt-16"
     >
-      {/* The rule draws itself before the line lifts in. Horizontal and centred
-          over the photograph, vertical and hung to the left on linen. */}
+      {/* The rule draws itself before the line lifts in. */}
       <motion.span
         aria-hidden="true"
-        className={
-          onMedia
-            ? 'mx-auto mb-6 block h-px w-12 origin-center bg-primary'
-            : 'absolute left-0 top-0 h-full w-px origin-top bg-primary'
-        }
-        initial={onMedia ? { scaleX: 0 } : { scaleY: 0 }}
-        whileInView={onMedia ? { scaleX: 1 } : { scaleY: 1 }}
+        className="mx-auto mb-6 block h-px w-12 origin-center bg-primary"
+        initial={{ scaleX: 0 }}
+        whileInView={{ scaleX: 1 }}
         viewport={{ once: true, margin: '-80px' }}
         transition={reduce ? { duration: 0 } : { duration: 0.9, ease: EASE }}
       />
       <p
-        className={`font-serif font-normal italic leading-snug ${
-          onMedia
-            ? 'text-xl text-white [text-shadow:0_1px_3px_rgba(0,0,0,0.55),0_4px_24px_rgba(0,0,0,0.6)] md:text-2xl'
-            : 'max-w-md text-2xl text-foreground'
-        }`}
+        className="font-serif font-normal italic leading-snug text-xl text-white [text-shadow:0_1px_3px_rgba(0,0,0,0.55),0_4px_24px_rgba(0,0,0,0.6)] md:text-2xl"
       >
         <MaskReveal reduce={reduce} duration={0.85} delay={0.2}>
           Every person is different. Real healing begins only when those differences are truly seen
@@ -178,18 +123,19 @@ function PullQuote({ onMedia, reduce, variants }) {
 
 /* `id` is passed only by the homepage, which uses this as its About section and
    needs the "/#about" nav target. On /about the page hero already owns that id,
-   so passing it here too would duplicate it.
-
-   `onMedia` is likewise the homepage's alone — see the note at the top. */
+   so passing it here too would duplicate it. */
 export default function AboutPractitioner({
   exploreLink = false,
   id,
   snap = false,
-  onMedia = false,
+  /* Copy length. The homepage gets the short biography; /about keeps the long
+     one, since it is the page the "Explore Us" link sends you to for exactly
+     that. */
+  summary = false,
 }) {
   const reduce = useReducedMotion()
   const it = reduce ? itemStill : item
-  const t = onMedia ? MEDIA : LINEN
+  const t = MEDIA
 
   return (
     <section
@@ -213,20 +159,7 @@ export default function AboutPractitioner({
           follow the layout: the columns sit side by side above md and stacked
           below it, and a horizontal wash under a stacked column would darken
           the wrong half of the frame. */}
-      {onMedia && (
-        <>
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0 md:hidden"
-            style={{ background: SCRIM_NARROW, maskImage: FEATHER, WebkitMaskImage: FEATHER }}
-          />
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0 hidden md:block"
-            style={{ background: SCRIM_WIDE, maskImage: FEATHER, WebkitMaskImage: FEATHER }}
-          />
-        </>
-      )}
+      <SectionScrim focus="right" />
 
       <motion.div
         className="relative z-10 mx-auto w-full max-w-content"
@@ -304,7 +237,7 @@ export default function AboutPractitioner({
                 the full paragraph, since it is the page the "Explore Us" link
                 below sends you to for exactly that. */}
             <motion.p variants={it} className={`font-sans leading-relaxed ${t.body}`}>
-              {onMedia ? (
+              {summary ? (
                 <>
                   Trained under Himalayan Gurus in the ancient art of pulse diagnosis, with a
                   Master&rsquo;s in Yogic Science specialising in Nadi Vaidya. Over a decade spent
@@ -321,11 +254,6 @@ export default function AboutPractitioner({
                 </>
               )}
             </motion.p>
-
-            {/* On linen the quote still belongs to this column, under the
-                biography it qualifies. Over the photograph it has been lifted
-                out to the foot of the section — see PullQuote. */}
-            {!onMedia && <PullQuote onMedia={false} reduce={reduce} variants={it} />}
 
             <motion.div variants={pills} className={`flex flex-wrap ${t.pillRow}`}>
               {CREDENTIALS.map((label) => (
@@ -355,7 +283,7 @@ export default function AboutPractitioner({
           </div>
         </div>
 
-        {onMedia && <PullQuote onMedia reduce={reduce} variants={it} />}
+        <PullQuote reduce={reduce} variants={it} />
       </motion.div>
     </section>
   )

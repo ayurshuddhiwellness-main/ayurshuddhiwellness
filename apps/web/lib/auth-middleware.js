@@ -7,7 +7,7 @@
 // `role` comes from a custom claim on the token (set admin users via
 // admin.auth().setCustomUserClaims(uid, { role: 'admin' })). Defaults to 'user'.
 
-import { getAuth } from './firebase-admin'
+import { getAuth } from './firebase-admin.js'
 
 function unauthorized(message) {
   return Response.json(

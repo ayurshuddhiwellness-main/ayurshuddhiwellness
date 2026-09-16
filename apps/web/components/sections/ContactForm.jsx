@@ -3,14 +3,9 @@
 import { useState } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { EASE } from '../ui/motion'
-
-const SUBJECTS = [
-  'General Inquiry',
-  'Book a Consultation',
-  'Therapy Question',
-  'Feedback',
-  'Other',
-]
+import { PANEL_CREAM, PANEL_CREAM_BG } from '../ui/surfaces'
+// Shared with app/api/contact/route.js, which rejects anything off this list.
+import { CONTACT_SUBJECTS } from '../../lib/validation'
 
 const REQUIRED = ['name', 'email', 'subject', 'message']
 
@@ -19,7 +14,7 @@ const EMPTY = { name: '', email: '', phone: '', subject: '', message: '' }
 // #B85C5C is the earthy error tone from DESIGN_SYSTEM_3.md. It has no Tailwind
 // token, so it is applied as an arbitrary value.
 const FIELD =
-  'w-full rounded-card border bg-white px-4 py-3 font-sans text-sm text-foreground transition-colors duration-300 focus:outline-none'
+  'w-full rounded-card border bg-white px-4 py-3 font-sans text-sm text-foreground transition-colors duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background'
 const OK = 'border-border focus:border-primary'
 const BAD = 'border-[#B85C5C] focus:border-[#B85C5C]'
 
@@ -83,7 +78,7 @@ export default function ContactForm() {
 
       if (!res.ok || !payload?.success) {
         setSendError(
-          payload?.error || 'Something went wrong sending your message. Please try again.',
+          payload?.error || 'Something went wrong sending your message. Please try again.'
         )
         return
       }
@@ -98,11 +93,7 @@ export default function ContactForm() {
 
   const errorFor = (field) =>
     errors[field] ? (
-      <p
-        id={`${field}-error`}
-        role="alert"
-        className="mt-2 font-sans text-xs text-[#B85C5C]"
-      >
+      <p id={`${field}-error`} role="alert" className="mt-2 font-sans text-xs text-[#B85C5C]">
         {errors[field]}
       </p>
     ) : null
@@ -122,7 +113,8 @@ export default function ContactForm() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={reduce ? { duration: 0 } : { duration: 0.6, ease: EASE }}
-          className="flex min-h-[420px] flex-col items-center justify-center rounded-2xl border border-border bg-card p-10 text-center"
+          style={{ background: PANEL_CREAM_BG }}
+          className={`flex min-h-[420px] flex-col items-center justify-center ${PANEL_CREAM} p-10 text-center`}
         >
           <span
             aria-hidden="true"
@@ -155,7 +147,8 @@ export default function ContactForm() {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={reduce ? { duration: 0 } : { duration: 0.4, ease: EASE }}
-          className="flex flex-col gap-6"
+          style={{ background: PANEL_CREAM_BG }}
+          className={`flex flex-col gap-6 ${PANEL_CREAM} p-6 sm:p-8`}
         >
           <div>
             <label htmlFor="name" className={LABEL}>
@@ -221,7 +214,7 @@ export default function ContactForm() {
               {...a11y('subject')}
             >
               <option value="">Select a subject</option>
-              {SUBJECTS.map((s) => (
+              {CONTACT_SUBJECTS.map((s) => (
                 <option key={s} value={s}>
                   {s}
                 </option>

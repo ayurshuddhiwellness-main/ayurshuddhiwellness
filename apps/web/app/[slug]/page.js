@@ -1,6 +1,5 @@
 import { notFound } from 'next/navigation'
-import Navbar from '../../components/layout/Navbar'
-import Footer from '../../components/layout/Footer'
+import SiteShell from '../../components/layout/SiteShell'
 import ServiceDetail from '../../components/sections/ServiceDetail'
 import { SERVICES, getService } from '../../lib/services'
 
@@ -39,12 +38,8 @@ export default async function ServicePage({ params }) {
   if (!service) notFound()
 
   return (
-    <>
-      <Navbar />
-      <main>
-        <ServiceDetail service={service} />
-      </main>
-      <Footer />
-    </>
+    <SiteShell>
+      <ServiceDetail service={service} />
+    </SiteShell>
   )
 }

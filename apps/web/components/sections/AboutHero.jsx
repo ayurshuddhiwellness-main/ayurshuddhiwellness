@@ -1,15 +1,12 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
-import {
-  motion,
-  useReducedMotion,
-  useScroll,
-  useTransform,
-} from 'framer-motion'
+import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion'
 import { EASE } from '../ui/motion'
 import { SPRIG_PATHS, SPRIG_VIEWBOX } from '../ui/sprigPaths'
 import MaskReveal from '../ui/MaskReveal'
+import SectionScrim from '../ui/SectionScrim'
+import { EYEBROW, HEADING, BODY } from '../ui/surfaces'
 import { useAboutIntroDone, releaseIfNoIntro } from '../../hooks/useAboutIntro'
 
 const HEADLINE_LINES = ['Wisdom passed down.', 'Wellness made personal.']
@@ -33,7 +30,7 @@ function BotanicalMotif({ reduce, play }) {
   return (
     <div
       aria-hidden="true"
-      className="pointer-events-none absolute -right-16 top-1/2 w-[85%] max-w-[520px] -translate-y-1/2 select-none text-primary opacity-[0.13] md:right-0 md:w-full md:opacity-[0.22]"
+      className="pointer-events-none absolute -right-16 top-1/2 w-[85%] max-w-[520px] -translate-y-1/2 select-none text-white opacity-[0.10] md:right-0 md:w-full md:opacity-[0.16]"
     >
       <svg
         viewBox={SPRIG_VIEWBOX}
@@ -51,9 +48,7 @@ function BotanicalMotif({ reduce, play }) {
             initial={{ pathLength: 0 }}
             animate={{ pathLength: play ? 1 : 0 }}
             transition={
-              reduce
-                ? { duration: 0 }
-                : { duration: 2.4, ease: 'easeInOut', delay: 0.3 + i * 0.12 }
+              reduce ? { duration: 0 } : { duration: 2.4, ease: 'easeInOut', delay: 0.3 + i * 0.12 }
             }
           />
         ))}
@@ -87,8 +82,10 @@ export default function AboutHero() {
     <section
       id="about"
       ref={sectionRef}
-      className="relative flex min-h-screen items-center overflow-hidden bg-background px-6 py-32 lg:px-12"
+      className="relative flex min-h-screen items-center overflow-hidden px-6 py-32 lg:px-12"
     >
+      <SectionScrim focus="left" />
+
       <motion.div
         style={{ opacity: reduce ? 1 : exitFade }}
         className="relative mx-auto grid w-full max-w-content items-center gap-16 md:grid-cols-12 md:gap-12"
@@ -99,16 +96,14 @@ export default function AboutHero() {
             initial={{ opacity: 0, y: 8 }}
             animate={done ? { opacity: 1, y: 0 } : { opacity: 0, y: 8 }}
             transition={
-              reduce
-                ? { duration: 0 }
-                : { duration: 0.5, ease: EASE, delay: EYEBROW_DELAY }
+              reduce ? { duration: 0 } : { duration: 0.5, ease: EASE, delay: EYEBROW_DELAY }
             }
-            className="mb-7 font-sans text-sm uppercase tracking-[0.25em] text-primary"
+            className={`mb-7 ${EYEBROW}`}
           >
             Our Story
           </motion.p>
 
-          <h1 className="font-serif text-5xl font-normal leading-[1.08] text-foreground md:text-6xl lg:text-7xl">
+          <h1 className={`${HEADING} text-4xl leading-[1.08] sm:text-5xl md:text-6xl lg:text-7xl`}>
             {HEADLINE_LINES.map((line, li) => (
               <MaskReveal
                 key={line}
@@ -126,29 +121,20 @@ export default function AboutHero() {
           {/* Hairline rule that draws itself left-to-right under the headline */}
           <motion.div
             aria-hidden="true"
-            className="mt-10 h-px w-full max-w-xs origin-left bg-border"
+            className="mt-10 h-px w-full max-w-xs origin-left bg-white/30"
             initial={{ scaleX: 0 }}
             animate={{ scaleX: done ? 1 : 0 }}
-            transition={
-              reduce
-                ? { duration: 0 }
-                : { duration: 1.1, ease: EASE, delay: RULE_DELAY }
-            }
+            transition={reduce ? { duration: 0 } : { duration: 1.1, ease: EASE, delay: RULE_DELAY }}
           />
 
           <motion.p
             initial={{ opacity: 0, y: 16 }}
             animate={done ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
-            transition={
-              reduce
-                ? { duration: 0 }
-                : { duration: 0.7, ease: EASE, delay: BODY_DELAY }
-            }
-            className="mt-8 max-w-md font-sans text-lg leading-relaxed text-muted"
+            transition={reduce ? { duration: 0 } : { duration: 0.7, ease: EASE, delay: BODY_DELAY }}
+            className={`mt-8 max-w-md ${BODY} text-lg`}
           >
-            AyurshuddhiWellness was founded on a simple belief — that ancient
-            Ayurvedic science, applied with care and precision, can transform
-            modern life.
+            AyurshuddhiWellness was founded on a simple belief — that ancient Ayurvedic science,
+            applied with care and precision, can transform modern life.
           </motion.p>
         </div>
 

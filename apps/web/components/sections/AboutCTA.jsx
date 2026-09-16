@@ -5,6 +5,8 @@ import { RevealGroup, RevealItem } from '../ui/Reveal'
 import AnimatedLink from '../ui/AnimatedLink'
 import MaskReveal from '../ui/MaskReveal'
 import { SPRIG_PATHS, SPRIG_VIEWBOX } from '../ui/sprigPaths'
+import SectionScrim from '../ui/SectionScrim'
+import { EYEBROW, HEADING, BODY, BTN_PRIMARY } from '../ui/surfaces'
 
 // Faint white sprig, mirrored on the opposite edge, drawn in on scroll.
 // `reduce` varies only the transition — see AboutHero for why.
@@ -43,7 +45,9 @@ export default function AboutCTA() {
   const reduce = useReducedMotion()
 
   return (
-    <section className="relative overflow-hidden bg-primary px-6 py-24 lg:px-12 lg:py-28">
+    <section className="relative overflow-hidden px-6 py-24 lg:px-12 lg:py-28">
+      <SectionScrim focus="center" />
+
       <Sprig
         reduce={reduce}
         className="pointer-events-none absolute -left-10 top-1/2 w-[220px] -translate-y-1/2 select-none text-white opacity-[0.09] md:left-4 md:w-[280px]"
@@ -57,27 +61,21 @@ export default function AboutCTA() {
 
       <RevealGroup className="relative z-10 mx-auto max-w-content text-center">
         <RevealItem>
-          <p className="mb-5 font-sans text-sm uppercase tracking-[0.25em] text-white/60">
-            Begin Your Journey
-          </p>
+          <p className={`mb-5 ${EYEBROW}`}>Begin Your Journey</p>
         </RevealItem>
 
-        <h2 className="font-serif text-4xl font-normal leading-tight text-white md:text-5xl">
+        <h2 className={`${HEADING} text-4xl md:text-5xl`}>
           <MaskReveal reduce={reduce}>Ready to meet us?</MaskReveal>
         </h2>
 
         <RevealItem className="mt-5">
-          <p className="mx-auto max-w-lg font-sans text-lg leading-relaxed text-white/70">
+          <p className={`mx-auto max-w-lg ${BODY} text-lg`}>
             Schedule a consultation and experience Ayurveda tailored to you.
           </p>
         </RevealItem>
 
         <RevealItem className="mt-10">
-          <AnimatedLink
-            href="#contact"
-            arrow
-            className="inline-flex items-center rounded-full bg-white px-8 py-3.5 font-sans text-sm font-medium text-primary shadow-soft transition-shadow duration-300 hover:shadow-md"
-          >
+          <AnimatedLink href="/contact" arrow className={BTN_PRIMARY}>
             Book a Consultation
           </AnimatedLink>
         </RevealItem>

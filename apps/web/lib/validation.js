@@ -2,6 +2,17 @@
 
 export const GENDERS = ['male', 'female', 'other', 'prefer_not_to_say']
 
+/* The /contact subject options. Declared once because the form renders them
+   and the API rejects anything not in the list — as two copies they had to
+   stay byte-identical or a perfectly ordinary submission would 400. */
+export const CONTACT_SUBJECTS = [
+  'General Inquiry',
+  'Book a Consultation',
+  'Therapy Question',
+  'Feedback',
+  'Other',
+]
+
 export const PRAKRITI_TYPES = [
   'vata',
   'pitta',

@@ -109,8 +109,7 @@ export default function Philosophy() {
   useEffect(() => {
     if (!pinned) return
 
-    const apply = (p) =>
-      setQuoteShown((shown) => (shown ? p > QUOTE_OUT : p >= QUOTE_IN))
+    const apply = (p) => setQuoteShown((shown) => (shown ? p > QUOTE_OUT : p >= QUOTE_IN))
 
     // Read once up front too: a restored scroll position can land partway into
     // the section without a change ever firing.
@@ -131,18 +130,11 @@ export default function Philosophy() {
     : { whileInView: 'visible', viewport: { once: true, amount: 0.3 } }
 
   return (
-    <section
-      ref={wrapperRef}
-      data-snap-section
-      className="relative z-10 motion-safe:md:h-[250vh]"
-    >
+    <section ref={wrapperRef} data-snap-section className="relative z-10 motion-safe:md:h-[250vh]">
       {/* The pinned frame. Height is exact rather than a minimum, and the
           overflow is clipped, so the frame can never grow past the viewport
           and let the section below peer out from under the pin. */}
-      <div
-        data-media-backdrop
-        className="relative flex min-h-screen flex-col overflow-hidden px-6 py-24 shadow-[0_-20px_40px_-15px_rgba(0,0,0,0.08)] motion-safe:md:sticky motion-safe:md:top-0 motion-safe:md:h-screen motion-safe:md:min-h-0 lg:px-12"
-      >
+      <div className="relative flex min-h-screen flex-col overflow-hidden px-6 py-24 shadow-[0_-20px_40px_-15px_rgba(0,0,0,0.08)] motion-safe:md:sticky motion-safe:md:top-0 motion-safe:md:h-screen motion-safe:md:min-h-0 lg:px-12">
         {/* No readability overlay. The hero's linen bed was tried here and read
             as a pale blob across the middle of the photograph — it is built to
             sit under the hero's DARK wordmark, and this section's copy is
@@ -180,14 +172,8 @@ export default function Philosophy() {
               {QUOTE.map((line) => (
                 // The clip frame carries extra depth so descenders aren't
                 // shaved, then pulls it back so the line keeps its true height.
-                <span
-                  key={line.text}
-                  className="-mb-[0.18em] block overflow-hidden pb-[0.18em]"
-                >
-                  <motion.span
-                    variants={quoteLine}
-                    className={`inline-block ${line.className}`}
-                  >
+                <span key={line.text} className="-mb-[0.18em] block overflow-hidden pb-[0.18em]">
+                  <motion.span variants={quoteLine} className={`inline-block ${line.className}`}>
                     {line.text}
                   </motion.span>
                 </span>

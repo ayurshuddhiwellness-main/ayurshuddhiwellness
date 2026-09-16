@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Image from 'next/image'
 import AnimatedLink from './AnimatedLink'
+import { PANEL_BG } from './surfaces'
 
 /* ──────────────────────────────────────────────────────────────────────────
    Image-cover service card.
@@ -34,8 +35,7 @@ const FACE =
    therefore preserves 3D — which also means it cannot clip with overflow,
    since any overflow other than visible forces the style back to flat. The
    gradient rounds its own bottom corners instead. */
-const HIDE_ON_TURN =
-  '[-webkit-backface-visibility:hidden] [backface-visibility:hidden]'
+const HIDE_ON_TURN = '[-webkit-backface-visibility:hidden] [backface-visibility:hidden]'
 
 /* Frosted sage for the turned face, in place of the flat primary fill.
 
@@ -115,14 +115,17 @@ export default function ServiceCard({
            track gives it. An aspect ratio would have tied height back to width
            and stretched the card again on the wider tracks. */
         className={`relative h-64 w-full cursor-pointer transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] [transform-style:preserve-3d] motion-reduce:transition-none ${
-          flipped
-            ? '[transform:rotateY(180deg)] motion-reduce:[transform:none]'
-            : ''
+          flipped ? '[transform:rotateY(180deg)] motion-reduce:[transform:none]' : ''
         }`}
       >
         {/* ── Front — photograph ─────────────────────────────────────────── */}
         <div
-          className={`${FACE} bg-card ${flipped ? 'pointer-events-none' : ''}`}
+          /* Translucent pine rather than the old opaque linen: this card now
+              sits on the site photograph, and the ground shows wherever the
+              picture is letterboxed (naturopathy is object-contain) and around
+              the rounded corners. */
+          style={{ background: PANEL_BG }}
+          className={`${FACE} border border-white/20 ${flipped ? 'pointer-events-none' : ''}`}
         >
           {/* A contained image leaves bare card behind it, which reads as a
               hard seam where the photo stops. Fill that with a blurred,
@@ -147,10 +150,7 @@ export default function ServiceCard({
             className={imageFit}
           />
 
-          <TapTarget
-            label={`Show details for ${title}`}
-            onClick={() => setFlipped(true)}
-          />
+          <TapTarget label={`Show details for ${title}`} onClick={() => setFlipped(true)} />
         </div>
 
         {/* ── Front label — the service name, on its own face ───────────────
@@ -217,21 +217,14 @@ export default function ServiceCard({
         <div
           style={GLASS}
           className={`${FACE} flex flex-col p-5 [transform:rotateY(180deg)] motion-reduce:transition-opacity motion-reduce:duration-200 motion-reduce:[transform:none] ${
-            flipped
-              ? 'motion-reduce:opacity-100'
-              : 'pointer-events-none motion-reduce:opacity-0'
+            flipped ? 'motion-reduce:opacity-100' : 'pointer-events-none motion-reduce:opacity-0'
           }`}
         >
-          <TapTarget
-            label={`Hide details for ${title}`}
-            onClick={() => setFlipped(false)}
-          />
+          <TapTarget label={`Hide details for ${title}`} onClick={() => setFlipped(false)} />
 
           <div className="text-white">{icon}</div>
 
-          <h3 className="mt-4 font-serif text-xl font-normal leading-snug text-white">
-            {title}
-          </h3>
+          <h3 className="mt-4 font-serif text-xl font-normal leading-snug text-white">{title}</h3>
 
           {/* Clamped to two lines. The full description is the service's own
               page, which the button below goes to. */}
