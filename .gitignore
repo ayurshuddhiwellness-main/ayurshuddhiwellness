@@ -46,6 +46,16 @@ graphify-out/
 !README.md
 !**/README.md
 
+# Agent instruction files — local working notes, not project docs.
+# Deliberately placed AFTER the block above, because git applies the LAST
+# matching pattern: stated here, these stay ignored even if the *.md rule is
+# later relaxed to start committing documentation. A pattern with no slash
+# matches at any depth, so nested copies are covered too.
+CLAUDE.md
+CLAUDE.local.md
+GEMINI.md
+AGENTS.md
+
 # ========================
 # IDE / Editor
 # ========================

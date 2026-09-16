@@ -9,7 +9,7 @@ Last updated: reflects state as of this conversation. Update this file whenever 
 - Monorepo: Turborepo + npm workspaces
 - Frontend: Next.js 15 (App Router) + React 19
 - Styling: Tailwind CSS 3.4
-- Fonts: Cormorant Garamond (serif) + Inter (sans-serif), loaded via `next/font`
+- Fonts: Playfair Display (serif, `--font-display`) + Inter (sans-serif, `--font-inter`), loaded via `next/font`
 - Animation: framer-motion
 - Language: JavaScript (`.js`/`.jsx`) — no TypeScript currently
 - Hosting: Vercel
@@ -27,11 +27,11 @@ Last updated: reflects state as of this conversation. Update this file whenever 
 - Primary accent (sage green): `#3F5E50`
 - Muted/secondary text: `#6B6B63` (warm gray)
 - Border/divider: `#E5E0D8` (soft tan)
-- Card/placeholder fill: `#E8E4DD`
+- Card/placeholder fill: `#F5F2EC` (`--color-card`)
 - Error/validation tone (kept earthy, not harsh): `#B85C5C`
 
 ### Typography
-- `font-serif`: Cormorant Garamond — all headlines (h1–h3), large editorial weight, regular (not bold) weight at large sizes
+- `font-serif`: Playfair Display — all headlines (h1–h3), large editorial weight, regular (not bold) weight at large sizes
 - `font-sans`: Inter — body text, nav, buttons, labels
 - Eyebrow labels: uppercase, `tracking-[0.25em]`, text-sm, sage green
 - Hero headline scale: `text-6xl` to `text-7xl` (desktop)
